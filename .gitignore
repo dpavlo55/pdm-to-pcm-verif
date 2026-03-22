@@ -1,3 +1,4 @@
 sim/*
 !sim/run.do
-!sim/filelist.f
+!sim/rtl.f
+!sim/tb.f

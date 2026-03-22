@@ -7,29 +7,28 @@ vlib work
 
 vmap work work
 
-set ::env(SRC_DIR) {//wsl.localhost/Ubuntu/home/david/pdm-to-pcm/src}
-
 set compile_cmd "vlog -sv \
     -work work \
     -lint \
     -pedanticerrors \
     -svinputport=net \
     +acc \
-    -f filelist.f"
+    -f rtl.f \
+    -f tb.f"
 
 if {[catch {eval $compile_cmd} compile_err]} {
     puts "ERROR: Compilation failed — $compile_err"
     quit -code 1
 }
 
-vopt work.tt_um_example -o tt_um_example_opt -designfile design.bin -debug
+vopt work.pdm_to_pcm_top_tb -o pdm_to_pcm_top_tb_opt -designfile design.bin -debug
 
-vsim work.tt_um_example \
+vsim work.pdm_to_pcm_top_tb \
     -sv_seed random \
     -voptargs=+acc \
     -onfinish exit \
     -qwavedb=+signal+cells \
-    +UVM_NO_RELNOTES
+    +UVM_NO_RELNOTES \
 
 run -all
 quit
