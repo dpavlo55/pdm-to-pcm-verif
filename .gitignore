@@ -2,3 +2,5 @@ sim/*
 !sim/run.do
 !sim/rtl.f
 !sim/tb.f
+
+.vscode/
