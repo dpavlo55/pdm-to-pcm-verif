@@ -8,4 +8,6 @@ src/uvc/**
 !src/uvc/**/*.sv
 !src/uvc/**/*.svh
 
+docs/**
+
 .vscode/

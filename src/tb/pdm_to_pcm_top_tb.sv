@@ -18,7 +18,7 @@ module pdm_to_pcm_top_tb;
     pdm_to_pcm_top dut (
         .clk (clk),
         .rst_n (rst_n),
-        .pdm_in (pdm_in), // TODO: Connect to a PDM signal generator
+        .pdm_in (pdm_in),
         .spi_clk (spi_if_inst.clk),
         .spi_mosi (spi_if_inst.mosi),
         .spi_miso (spi_if_inst.miso),

@@ -10,6 +10,14 @@ class spi_configuration extends uvm_object;
     protected vif_t vif;
     protected uvm_active_passive_enum is_active = UVM_ACTIVE;
 
+    protected bit cpol = 1'b0;
+    protected bit cpha = 1'b0;
+    protected bit lsb_first = 1'b1;
+    protected real frequency = 1.0e6;
+    protected real delay_lead = 1.0e-6;
+    protected real delay_trail = 1.0e-6;
+    protected real delay_inter = 1.0e-6;
+
     // class constructor
     function new(string name = "spi_configuration");
         super.new(name);

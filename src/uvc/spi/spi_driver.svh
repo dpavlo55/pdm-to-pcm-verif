@@ -33,7 +33,16 @@ class spi_driver extends uvm_driver #(spi_seq_item);
     endtask : delay
 
     virtual task run_phase(uvm_phase phase);
-        // your code here
+        item_t item;
+        forever begin
+            // get the next item from the sequencer
+            seq_item_port.get_next_item(item);
+
+            item.print();
+
+            // signal to the sequencer that the item has been processed
+            seq_item_port.item_done();
+        end
     endtask : run_phase
 
 endclass : spi_driver

@@ -16,7 +16,11 @@ class spi_reg_adapter extends uvm_reg_adapter;
     virtual function uvm_sequence_item reg2bus(const ref uvm_reg_bus_op rw);
         item_t item;
         item = item_t::type_id::create("item");
-        // your code here
+
+        item.cmd = (rw.kind == UVM_READ) ? item_t::SPI_READ : item_t::SPI_WRITE;
+        item.addr = rw.addr;
+        item.data = rw.data;
+
         return item;
     endfunction : reg2bus
 
@@ -25,7 +29,11 @@ class spi_reg_adapter extends uvm_reg_adapter;
         if (!$cast(item, bus_item)) begin
             `uvm_fatal(get_type_name(), "Type mismatch in bus2reg")
         end
-        // your code here
+
+        rw.kind = (item.cmd == item_t::SPI_READ) ? UVM_READ : UVM_WRITE;
+        rw.addr = item.addr;
+        rw.data = item.data;
+
     endfunction : bus2reg
 
 endclass : spi_reg_adapter
