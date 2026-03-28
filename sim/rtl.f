@@ -1,8 +1,8 @@
 # common
-../rtl/common/edge_detector.sv
+../rtl/src/edge_detector.sv
 
 # SPI
-../rtl/spi/spi_top.sv
+../rtl/src/spi.sv
 
 # top-level
-../rtl/top/pdm_to_pcm_top.sv
+../rtl/src/pdm_to_pcm_top.sv

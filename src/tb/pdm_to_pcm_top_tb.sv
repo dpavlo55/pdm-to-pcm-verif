@@ -1,3 +1,8 @@
+import uvm_pkg::*;
+`include "uvm_macros.svh"
+
+import pdm_to_pcm_test_pkg::*;
+
 module pdm_to_pcm_top_tb;
 
     timeunit 1ns/1ps;
@@ -7,14 +12,17 @@ module pdm_to_pcm_top_tb;
     logic rst_n;
     logic pdm_in;
 
+    // interfaces
+    spi_if spi_if_inst();
+
     pdm_to_pcm_top dut (
         .clk (clk),
         .rst_n (rst_n),
         .pdm_in (pdm_in), // TODO: Connect to a PDM signal generator
-        .spi_clk (),
-        .spi_mosi (),
-        .spi_miso (),
-        .spi_cs_n ()
+        .spi_clk (spi_if_inst.clk),
+        .spi_mosi (spi_if_inst.mosi),
+        .spi_miso (spi_if_inst.miso),
+        .spi_cs_n (spi_if_inst.cs_n)
     );
 
     // Clock generation
@@ -48,8 +56,7 @@ module pdm_to_pcm_top_tb;
         forever @(posedge clk) begin
             int delay;
             if (!std::randomize(delay) with { delay inside {[0:10]}; }) begin
-                $display("Randomization failed for delay");
-                delay = 0; // Default to no delay on failure
+                $fatal("Randomization failed for delay");
             end
             wait_clk(delay);
             pdm_in <= ~pdm_in;
@@ -60,8 +67,18 @@ module pdm_to_pcm_top_tb;
         fork
             gen_pdm_in();
         join_none
-        #1000ns;
+        #100ns;
         $finish;
+    end
+
+    // UVM testbench initialization
+    initial begin
+        `uvm_info("UVM_VERSION", $sformatf("UVM version is %0s", `UVM_VERSION_STRING), UVM_LOW)
+        // Set the virtual interface in the resource database
+        uvm_resource_db#(virtual interface spi_if)::set(
+            uvm_top.get_full_name(), "spi_if", spi_if_inst, null);
+        // Run the UVM test
+        run_test("base_test");
     end
 
 endmodule

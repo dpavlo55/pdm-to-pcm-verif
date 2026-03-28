@@ -3,4 +3,9 @@ sim/*
 !sim/rtl.f
 !sim/tb.f
 
+src/uvc/**
+!src/uvc/*/
+!src/uvc/**/*.sv
+!src/uvc/**/*.svh
+
 .vscode/

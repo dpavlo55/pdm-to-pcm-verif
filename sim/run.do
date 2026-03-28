@@ -10,7 +10,6 @@ vmap work work
 set compile_cmd "vlog -sv \
     -work work \
     -lint \
-    -pedanticerrors \
     -svinputport=net \
     +acc \
     -f rtl.f \
