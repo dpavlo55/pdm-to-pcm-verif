@@ -26,19 +26,59 @@ class spi_driver extends uvm_driver #(spi_seq_item);
             `uvm_fatal(get_type_name(),
                 "Failed to retrive SPI configuration from uvm_resource_db")
         end
+
+        vif = configuration.get_vif();
     endfunction : build_phase
 
-    virtual task automatic delay(input int NUMBER_OF_DELAY_CYCLES = 1);
-        // your code here
-    endtask : delay
+    task reset();
+        vif.cs_n <= 1'b1;
+        vif.sck <= 1'b0;
+        vif.mosi <= 1'b0;
+    endtask : reset
+
+    task transaction(item_t item);
+        bit bit_stream[];
+
+        item.pack(bit_stream);
+
+        //if (configuration.get_lsb_first()) begin
+        //    byte unsigned byte_stream[];
+        //    byte unsigned byte_stream_r[];
+        //    item.pack_bytes(byte_stream);
+        //    byte_stream_r = {<<8{byte_stream}};
+        //    bit_stream = {<<{byte_stream_r}};
+        //end
+
+        vif.cs_n <= 1'b0;
+
+        foreach (bit_stream[i]) begin
+            vif.mosi <= bit_stream[i];
+            #(configuration.get_period() / 2.0 * 1s);
+            vif.sck <= 1'b1;
+            #(configuration.get_period() / 2.0 * 1s);
+            vif.sck <= 1'b0;
+        end
+
+        #(configuration.get_period() / 2.0 * 1s);
+        vif.cs_n <= 1'b1;
+        #(configuration.get_period() / 2.0 * 1s);
+
+    endtask : transaction
 
     virtual task run_phase(uvm_phase phase);
         item_t item;
+
+        reset();
+
+        #(configuration.get_delay_lead() * 1s);
+
         forever begin
             // get the next item from the sequencer
             seq_item_port.get_next_item(item);
 
             item.print();
+
+            transaction(item);
 
             // signal to the sequencer that the item has been processed
             seq_item_port.item_done();

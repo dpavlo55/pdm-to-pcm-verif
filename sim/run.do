@@ -26,7 +26,7 @@ vsim work.pdm_to_pcm_top_tb \
     -sv_seed random \
     -voptargs=+acc \
     -onfinish exit \
-    -qwavedb=+signal+cells \
+    -qwavedb=+signal+cells+uvm_configdb+class+transaction+uvm_schematic+uvm_register+uvm_factory \
     +UVM_NO_RELNOTES \
 
 run -all

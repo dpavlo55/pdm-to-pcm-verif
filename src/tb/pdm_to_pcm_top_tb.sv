@@ -7,6 +7,9 @@ module pdm_to_pcm_top_tb;
 
     timeunit 1ns/1ps;
 
+    localparam real CLOCK_FREQUENCY = 25.0e6;
+    localparam real CLOCK_PERIOD = 1.0 / CLOCK_FREQUENCY;
+
     // Clock and reset
     logic clk;
     logic rst_n;
@@ -19,7 +22,7 @@ module pdm_to_pcm_top_tb;
         .clk (clk),
         .rst_n (rst_n),
         .pdm_in (pdm_in),
-        .spi_clk (spi_if_inst.clk),
+        .spi_sck (spi_if_inst.sck),
         .spi_mosi (spi_if_inst.mosi),
         .spi_miso (spi_if_inst.miso),
         .spi_cs_n (spi_if_inst.cs_n)
@@ -28,7 +31,7 @@ module pdm_to_pcm_top_tb;
     // Clock generation
     initial begin
         clk = 0;
-        forever #5ns clk = ~clk; // 100 MHz clock
+        forever #(CLOCK_PERIOD / 2.0 * 1s) clk = ~clk; // 100 MHz clock
     end
 
     task automatic wait_clk(input int delay);
@@ -67,8 +70,6 @@ module pdm_to_pcm_top_tb;
         fork
             gen_pdm_in();
         join_none
-        #100ns;
-        $finish;
     end
 
     // UVM testbench initialization

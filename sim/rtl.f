@@ -1,6 +1,10 @@
 # common
 ../rtl/src/edge_detector.sv
 
+# regs
+../rtl/src/regs_pkg.sv
+../rtl/src/regs.sv
+
 # SPI
 ../rtl/src/spi.sv
 

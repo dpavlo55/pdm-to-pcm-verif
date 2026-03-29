@@ -18,6 +18,9 @@ class spi_seq_item extends uvm_sequence_item;
     rand logic [4:0] addr;
     rand logic [7:0] data;
 
+    // metadata
+    string reg_name;
+
     function new(string name = "spi_seq_item");
         super.new(name);
     endfunction : new
@@ -26,7 +29,8 @@ class spi_seq_item extends uvm_sequence_item;
         string s = super.convert2string();
         s = {s, $sformatf("\nSPI transaction:\n")};
         s = {s, $sformatf("  cmd  : %s\n", cmd.name())};
-        s = {s, $sformatf("  addr : 0x%2h\n", addr)};
+        s = {s, $sformatf("  addr : 0x%2h (%s)\n", addr, reg_name)};
+        //s = {s, $sformatf("  reg  : %s\n", reg_name)};
         s = {s, $sformatf("  data : 0x%2h\n", data)};
         return s;
     endfunction : convert2string
@@ -39,6 +43,7 @@ class spi_seq_item extends uvm_sequence_item;
         this.cmd = item.cmd;
         this.addr = item.addr;
         this.data = item.data;
+        this.reg_name = item.reg_name;
     endfunction : do_copy
 
     virtual function bit do_compare(uvm_object rhs, uvm_comparer comparer);
@@ -48,7 +53,8 @@ class spi_seq_item extends uvm_sequence_item;
         return
             (this.cmd == item.cmd) &&
             (this.addr == item.addr) &&
-            (this.data == item.data);
+            (this.data == item.data) &&
+            (this.reg_name == item.reg_name);
     endfunction : do_compare
 
     virtual function void do_print(uvm_printer printer);
@@ -69,7 +75,9 @@ class spi_seq_item extends uvm_sequence_item;
 
     virtual function void do_record(uvm_recorder recorder);
         recorder.record_string("cmd", cmd.name());
+        recorder.record_string("reg", reg_name);
         recorder.record_field("addr", addr, $bits(addr), UVM_HEX);
+        //recorder.record_string("addr", $sformatf("%2h (%s)", addr, reg_name));
         recorder.record_field("data", data, $bits(data), UVM_HEX);
     endfunction : do_record
 

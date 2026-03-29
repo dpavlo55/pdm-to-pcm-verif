@@ -15,11 +15,24 @@ class spi_reg_adapter extends uvm_reg_adapter;
 
     virtual function uvm_sequence_item reg2bus(const ref uvm_reg_bus_op rw);
         item_t item;
+        uvm_reg_item reg_item;
+        uvm_reg register;
+
         item = item_t::type_id::create("item");
 
         item.cmd = (rw.kind == UVM_READ) ? item_t::SPI_READ : item_t::SPI_WRITE;
         item.addr = rw.addr;
         item.data = rw.data;
+
+        reg_item = this.get_item();
+
+        if (reg_item != null) begin
+            if ($cast(register, reg_item.element)) begin
+                item.reg_name = register.get_name().toupper();
+            end else begin
+                item.reg_name = "UNKNOWN"; // Handle memory bursts or fields
+            end
+        end
 
         return item;
     endfunction : reg2bus

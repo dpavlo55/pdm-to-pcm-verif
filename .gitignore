@@ -2,6 +2,7 @@ sim/*
 !sim/run.do
 !sim/rtl.f
 !sim/tb.f
+!sim/wave.do
 
 src/uvc/**
 !src/uvc/*/
