@@ -8,6 +8,7 @@ package pdm_to_pcm_reg_pkg;
     class pdm_to_pcm_reg__control extends uvm_reg;
         rand uvm_reg_field enable;
         rand uvm_reg_field divider;
+        rand uvm_reg_field test;
 
         function new(string name = "pdm_to_pcm_reg__control");
             super.new(name, 8, UVM_NO_COVERAGE);
@@ -17,7 +18,9 @@ package pdm_to_pcm_reg_pkg;
             this.enable = new("enable");
             this.enable.configure(this, 1, 0, "RW", 0, 'h0, 1, 1, 0);
             this.divider = new("divider");
-            this.divider.configure(this, 2, 1, "RW", 0, 'h0, 0, 1, 0);
+            this.divider.configure(this, 2, 1, "RW", 0, 'h0, 1, 1, 0);
+            this.test = new("test");
+            this.test.configure(this, 5, 3, "RW", 0, 'h0, 1, 1, 0);
         endfunction : build
     endclass : pdm_to_pcm_reg__control
 
