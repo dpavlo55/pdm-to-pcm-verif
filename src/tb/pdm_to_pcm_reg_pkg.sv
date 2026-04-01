@@ -62,7 +62,7 @@ package pdm_to_pcm_reg_pkg;
 
         virtual function void build();
             this.test = new("test");
-            this.test.configure(this, 8, 0, "RW", 0, 'h0, 1, 1, 0);
+            this.test.configure(this, 8, 0, "RW", 0, 'hbb, 1, 1, 0);
         endfunction : build
     endclass : pdm_to_pcm_reg__test_reg
 
