@@ -16,14 +16,19 @@ mkdir %HTML_OUT% 2>nul
 mkdir %CHEADER_OUT% 2>nul
 
 echo Exporting RTL regblock...
-%PEAKRDL% regblock ^
-    %RDL_SRC% ^
-    -o %RTL_OUT% ^
-    --module-name regs ^
-    --package-name regs_pkg ^
-    --cpuif passthrough ^
-    --default-reset rst_n ^
-    --hwif-report
+rtl\.venv\Scripts\python.exe rtl\scripts\reg_generator.py ^
+    --rdl %RDL_SRC% ^
+    --outdir %RTL_OUT%
+
+rem echo Exporting RTL regblock (PeakRDL - not Yosys compatible)...
+rem %PEAKRDL% regblock ^
+rem     %RDL_SRC% ^
+rem     -o %RTL_OUT% ^
+rem     --module-name regs ^
+rem     --package-name regs_pkg ^
+rem     --cpuif passthrough ^
+rem     --default-reset rst_n ^
+rem     --hwif-report
 
 echo Exporting UVM RAL...
 %PEAKRDL% uvm ^

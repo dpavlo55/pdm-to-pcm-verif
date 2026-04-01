@@ -52,11 +52,26 @@ package pdm_to_pcm_reg_pkg;
         endfunction : build
     endclass : pdm_to_pcm_reg__id
 
+    // reg - pdm_to_pcm_reg::test_reg
+    class pdm_to_pcm_reg__test_reg extends uvm_reg;
+        rand uvm_reg_field test;
+
+        function new(string name = "pdm_to_pcm_reg__test_reg");
+            super.new(name, 8, UVM_NO_COVERAGE);
+        endfunction : new
+
+        virtual function void build();
+            this.test = new("test");
+            this.test.configure(this, 8, 0, "RW", 0, 'h0, 1, 1, 0);
+        endfunction : build
+    endclass : pdm_to_pcm_reg__test_reg
+
     // addrmap - pdm_to_pcm_reg
     class pdm_to_pcm_reg extends uvm_reg_block;
         rand pdm_to_pcm_reg__control control;
         rand pdm_to_pcm_reg__data data;
         rand pdm_to_pcm_reg__id id;
+        rand pdm_to_pcm_reg__test_reg test_reg;
 
         function new(string name = "pdm_to_pcm_reg");
             super.new(name);
@@ -79,6 +94,11 @@ package pdm_to_pcm_reg_pkg;
 
             this.id.build();
             this.default_map.add_reg(this.id, 'h2);
+            this.test_reg = new("test_reg");
+            this.test_reg.configure(this);
+
+            this.test_reg.build();
+            this.default_map.add_reg(this.test_reg, 'h3);
         endfunction : build
     endclass : pdm_to_pcm_reg
 
