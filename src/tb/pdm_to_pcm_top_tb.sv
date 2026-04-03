@@ -7,13 +7,18 @@ module pdm_to_pcm_top_tb;
 
     timeunit 1ns/1ps;
 
-    localparam real CLOCK_FREQUENCY = 25.0e6;
-    localparam real CLOCK_PERIOD = 1.0 / CLOCK_FREQUENCY;
+    localparam real CLOCK_FREQUENCY  = 50.0e6;
+    localparam real CLOCK_PERIOD      = 1.0 / CLOCK_FREQUENCY;
+    localparam real PDM_SAMPLE_RATE   = 2.0e6;
+    localparam int  CLKS_PER_SAMPLE   = int'(CLOCK_FREQUENCY / PDM_SAMPLE_RATE); // 25
+    //localparam string PDM_FILE        = "pdm_10kHz_2MHz.txt";
+    localparam string PDM_FILE        = "pdm_2kHz_2MHz.txt";
 
     // Clock and reset
     logic clk;
     logic rst_n;
     logic pdm_in;
+    logic pdm_in_valid;
 
     // interfaces
     spi_if spi_if_inst();
@@ -22,6 +27,7 @@ module pdm_to_pcm_top_tb;
         .clk (clk),
         .rst_n (rst_n),
         .pdm_in (pdm_in),
+        .pdm_in_valid (pdm_in_valid),
         .spi_sck (spi_if_inst.sck),
         .spi_mosi (spi_if_inst.mosi),
         .spi_miso (spi_if_inst.miso),
@@ -31,7 +37,7 @@ module pdm_to_pcm_top_tb;
     // Clock generation
     initial begin
         clk = 0;
-        forever #(CLOCK_PERIOD / 2.0 * 1s) clk = ~clk; // 100 MHz clock
+        forever #(CLOCK_PERIOD / 2.0 * 1s) clk = ~clk;
     end
 
     task automatic wait_clk(input int delay);
@@ -46,30 +52,45 @@ module pdm_to_pcm_top_tb;
         rst_n = 1'b1;
     end
 
-    // Randomize pdm_in
-    task automatic gen_pdm_in();
+    // Drive pdm_in and pdm_in_valid from a PDM sample file.
+    // Each line contains a single bit (0 or 1).
+    // pdm_in_valid is a 1-cycle-wide pulse every CLKS_PER_SAMPLE clock cycles.
+    task automatic gen_pdm_from_file(input string filename);
+        integer fd;
+        integer code;
+        integer val;
 
-        pdm_in = 1'b0;
+        pdm_in       = 1'b0;
+        pdm_in_valid = 1'b0;
 
         // Wait for reset to deassert
         @(negedge rst_n);
         @(posedge rst_n);
 
-        // Randomize pdm_in every clock cycle
-        forever @(posedge clk) begin
-            int delay;
-            if (!std::randomize(delay) with { delay inside {[0:10]}; }) begin
-                $fatal("Randomization failed for delay");
-            end
-            wait_clk(delay);
-            pdm_in <= ~pdm_in;
+        fd = $fopen(filename, "r");
+        if (fd == 0)
+            $fatal(1, "gen_pdm_from_file: cannot open '%s'", filename);
+
+        while (!$feof(fd)) begin
+            code = $fscanf(fd, "%d\n", val);
+            if (code != 1) break;
+            // Assert valid for exactly 1 cycle, then hold pdm_in stable for
+            // the remaining CLKS_PER_SAMPLE-1 cycles.
+            @(posedge clk);
+            pdm_in       <= val[0];
+            pdm_in_valid <= 1'b1;
+            @(posedge clk);
+            pdm_in_valid <= 1'b0;
+            repeat (CLKS_PER_SAMPLE - 2) @(posedge clk);
         end
-    endtask : gen_pdm_in
+
+        $fclose(fd);
+        `uvm_info("PDM_GEN", "PDM file playback complete", UVM_LOW)
+    endtask : gen_pdm_from_file
 
     initial begin
-        fork
-            gen_pdm_in();
-        join_none
+        gen_pdm_from_file(PDM_FILE);
+        #100ns;
     end
 
     // UVM testbench initialization

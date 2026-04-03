@@ -66,7 +66,7 @@ class base_test extends uvm_test;
 
     task run_phase(uvm_phase phase);
         `uvm_info(get_type_name(), "Hello World", UVM_MEDIUM)
-        phase.phase_done.set_drain_time(this, 100ns);
+        phase.phase_done.set_drain_time(this, 10ms);
 
         phase.raise_objection(this);
 
