@@ -1,6 +1,9 @@
 # common
 ../rtl/src/edge_detector.sv
 
+# CIC decimation filter
+../rtl/src/cic.sv
+
 # regs
 ../rtl/src/regs_defs.svh
 ../rtl/src/regs.sv
@@ -12,4 +15,5 @@
 ../rtl/src/spi.sv
 
 # top-level
-../rtl/src/tt_um_pdm_to_pcm_top.sv
+../rtl/src/pdm_to_pcm_top.sv
+../rtl/src/tt_um_top.sv

@@ -18,7 +18,7 @@ module pdm_to_pcm_top_tb;
     // interfaces
     spi_if spi_if_inst();
 
-    tt_um_pdm_to_pcm_top dut (
+    pdm_to_pcm_top dut (
         .clk (clk),
         .rst_n (rst_n),
         .pdm_in (pdm_in),
