@@ -2,6 +2,7 @@
 setlocal
 
 set PEAKRDL=rtl\.venv\Scripts\peakrdl
+set UDP_SRC=rtl\src\regblock_udps.rdl
 set RDL_SRC=rtl\src\pdm_to_pcm.rdl
 set RTL_OUT=rtl\src\
 set RAL_OUT=src\tb\
@@ -16,32 +17,27 @@ mkdir %HTML_OUT% 2>nul
 mkdir %CHEADER_OUT% 2>nul
 
 echo Exporting RTL regblock...
-rtl\.venv\Scripts\python.exe rtl\scripts\reg_generator.py ^
-    --rdl %RDL_SRC% ^
-    --outdir %RTL_OUT%
-
-rem echo Exporting RTL regblock (PeakRDL - not Yosys compatible)...
-rem %PEAKRDL% regblock ^
-rem     %RDL_SRC% ^
-rem     -o %RTL_OUT% ^
-rem     --module-name regs ^
-rem     --package-name regs_pkg ^
-rem     --cpuif passthrough ^
-rem     --default-reset rst_n ^
-rem     --hwif-report
+%PEAKRDL% --peakrdl-cfg rtl\scripts\peakrdl.toml regblock-tt ^
+    %UDP_SRC% ^
+    %RDL_SRC% ^
+    -o %RTL_OUT%
 
 echo Exporting UVM RAL...
-%PEAKRDL% uvm ^
+%PEAKRDL% --peakrdl-cfg rtl\scripts\peakrdl.toml uvm-tt ^
+    %UDP_SRC% ^
     %RDL_SRC% ^
+    --type-style hier ^
     -o %RAL_OUT%\%MODULE_NAME%_reg_pkg.sv
 
 echo Exporting HTML documentation...
 %PEAKRDL% html ^
+    %UDP_SRC% ^
     %RDL_SRC% ^
     -o %HTML_OUT%\
 
 echo Exporting C header...
 %PEAKRDL% c-header ^
+    %UDP_SRC% ^
     %RDL_SRC% ^
     -o %CHEADER_OUT%\%MODULE_NAME%.h
 

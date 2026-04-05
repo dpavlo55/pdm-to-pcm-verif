@@ -28,6 +28,8 @@ vsim work.pdm_to_pcm_top_tb \
     -onfinish exit \
     -qwavedb=+signal+cells+uvm_configdb+class+transaction+uvm_schematic+uvm_register+uvm_factory \
     +UVM_NO_RELNOTES \
+    +UVM_TESTNAME=$1 \
+    +UVM_MAX_QUIT_COUNT=1 \
 
 run -all
 quit

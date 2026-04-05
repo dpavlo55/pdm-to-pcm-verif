@@ -41,14 +41,6 @@ class spi_driver extends uvm_driver #(spi_seq_item);
 
         item.pack(bit_stream);
 
-        //if (configuration.get_lsb_first()) begin
-        //    byte unsigned byte_stream[];
-        //    byte unsigned byte_stream_r[];
-        //    item.pack_bytes(byte_stream);
-        //    byte_stream_r = {<<8{byte_stream}};
-        //    bit_stream = {<<{byte_stream_r}};
-        //end
-
         vif.cs_n <= 1'b0;
 
         foreach (bit_stream[i]) begin

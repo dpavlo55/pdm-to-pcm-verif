@@ -6,7 +6,7 @@ class spi_agent extends uvm_agent;
     `uvm_component_utils(spi_agent)
 
     protected spi_driver driver;
-    protected spi_monitor monitor;
+    spi_monitor monitor;
     protected spi_sequencer sequencer;
     protected spi_configuration configuration;
 

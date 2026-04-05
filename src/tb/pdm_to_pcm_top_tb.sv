@@ -9,10 +9,12 @@ module pdm_to_pcm_top_tb;
 
     localparam real CLOCK_FREQUENCY  = 50.0e6;
     localparam real CLOCK_PERIOD      = 1.0 / CLOCK_FREQUENCY;
-    localparam real PDM_SAMPLE_RATE   = 2.0e6;
+    localparam real PDM_SAMPLE_RATE   = 4.0e6;
     localparam int  CLKS_PER_SAMPLE   = int'(CLOCK_FREQUENCY / PDM_SAMPLE_RATE); // 25
     //localparam string PDM_FILE        = "pdm_10kHz_2MHz.txt";
-    localparam string PDM_FILE        = "pdm_2kHz_2MHz.txt";
+    //localparam string PDM_FILE        = "pdm_2kHz_2MHz.txt";
+    localparam string PDM_FILE        = "pdm_2kHz_4MHz.txt";
+    //localparam string PDM_FILE        = "pdm_10kHz_4MHz.txt";
 
     // Clock and reset
     logic clk;
@@ -100,7 +102,7 @@ module pdm_to_pcm_top_tb;
         uvm_resource_db#(virtual interface spi_if)::set(
             uvm_top.get_full_name(), "spi_if", spi_if_inst, null);
         // Run the UVM test
-        run_test("base_test");
+        run_test();
     end
 
 endmodule

@@ -14,6 +14,9 @@
 # SPI
 ../rtl/src/spi.sv
 
+# PDM
+../rtl/src/pdm_clk_gen.sv
+
 # top-level
 ../rtl/src/pdm_to_pcm_top.sv
 ../rtl/src/tt_um_top.sv

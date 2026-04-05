@@ -3,7 +3,7 @@
 
 class spi_reg_adapter extends uvm_reg_adapter;
 
-    `uvm_object_utils(spi_reg_adapter )
+    `uvm_object_utils(spi_reg_adapter)
 
     typedef spi_seq_item item_t;
 
@@ -22,7 +22,12 @@ class spi_reg_adapter extends uvm_reg_adapter;
 
         item.cmd = (rw.kind == UVM_READ) ? item_t::SPI_READ : item_t::SPI_WRITE;
         item.addr = rw.addr;
-        item.data = rw.data;
+
+        if (item.cmd == item_t::SPI_WRITE) begin
+            item.data = rw.data;
+        end else begin
+            item.data = 'hBB;
+        end
 
         reg_item = this.get_item();
 
@@ -30,7 +35,7 @@ class spi_reg_adapter extends uvm_reg_adapter;
             if ($cast(register, reg_item.element)) begin
                 item.reg_name = register.get_name().toupper();
             end else begin
-                item.reg_name = "UNKNOWN"; // Handle memory bursts or fields
+                item.reg_name = "UNKNOWN";
             end
         end
 
