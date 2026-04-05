@@ -6,6 +6,7 @@ class spi_agent extends uvm_agent;
     `uvm_component_utils(spi_agent)
 
     protected spi_driver driver;
+    // TODO: keep monitor protected and provide analysis port to connect with predictor
     spi_monitor monitor;
     protected spi_sequencer sequencer;
     protected spi_configuration configuration;
@@ -39,8 +40,10 @@ class spi_agent extends uvm_agent;
     endfunction : build_phase
 
     virtual function void connect_phase(uvm_phase phase);
-        if (configuration.get_is_active() == UVM_ACTIVE)
+        if (configuration.get_is_active() == UVM_ACTIVE) begin
             driver.seq_item_port.connect(sequencer.seq_item_export);
+            monitor.output_ap.connect(driver.rsp_fifo.analysis_export);
+        end
     endfunction : connect_phase
 
 endclass : spi_agent

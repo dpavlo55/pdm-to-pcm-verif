@@ -45,7 +45,6 @@ class base_test extends uvm_test;
         regs.configure(null, "pdm_to_pcm_top_tb.dut.regs_inst");
         regs.build();
         regs.lock_model();
-        //regs.default_map.set_auto_predict(1'b0);
 
         reg_adapter = spi_reg_adapter::type_id::create("reg_adapter", this);
         reg_predictor = spi_reg_predictor::type_id::create("reg_predictor", this);
@@ -66,25 +65,18 @@ class base_test extends uvm_test;
         uvm_top.print_topology();
     endfunction : end_of_elaboration_phase
 
+    virtual task reset_phase(uvm_phase phase);
+        regs.reset();
+    endtask : reset_phase
+
     task run_phase(uvm_phase phase);
         `uvm_info(get_type_name(), "Hello World", UVM_MEDIUM)
-        phase.phase_done.set_drain_time(this, 10ms);
-
-        phase.raise_objection(this);
-
-        regs.control.write(status, 8'hAB);
-        regs.data.write(status, 8'hDA);
-
-        regs.control.read(status, rd_data);
-        regs.data.read(status, rd_data);
-
-        phase.drop_objection(this);
     endtask
 endclass
 
-class pdm_to_pcm_reg_bit_bash_test extends base_test;
+class reg_bit_bash_test extends base_test;
 
-    `uvm_component_utils(pdm_to_pcm_reg_bit_bash_test)
+    `uvm_component_utils(reg_bit_bash_test)
 
     function new(string name, uvm_component parent);
         super.new(name, parent);
@@ -93,7 +85,7 @@ class pdm_to_pcm_reg_bit_bash_test extends base_test;
     task run_phase(uvm_phase phase);
         uvm_reg_bit_bash_seq seq;
 
-        `uvm_info(get_type_name(), "This is the reg bit bash test's run phase", UVM_DEBUG)
+        `uvm_info(get_type_name(), "This is the reg_bit_bash test's run phase", UVM_DEBUG)
         phase.phase_done.set_drain_time(this, 1us);
 
         phase.raise_objection(this);
@@ -105,11 +97,59 @@ class pdm_to_pcm_reg_bit_bash_test extends base_test;
         phase.drop_objection(this);
     endtask : run_phase
 
-endclass : pdm_to_pcm_reg_bit_bash_test
+endclass : reg_bit_bash_test
 
-class pdm_to_pcm_top_clk_test extends base_test;
+class reg_hw_reset_test extends base_test;
 
-    `uvm_component_utils(pdm_to_pcm_top_clk_test)
+    `uvm_component_utils(reg_hw_reset_test)
+
+    function new(string name, uvm_component parent);
+        super.new(name, parent);
+    endfunction
+
+    task run_phase(uvm_phase phase);
+        uvm_reg_hw_reset_seq seq;
+        `uvm_info(get_type_name(), "This is the reg_hw_reset test's run phase", UVM_DEBUG)
+        phase.phase_done.set_drain_time(this, 1us);
+
+        phase.raise_objection(this);
+
+        seq = uvm_reg_hw_reset_seq::type_id::create("seq");
+        seq.model = regs;
+        seq.start(spi_master.get_sequencer());
+
+        phase.drop_objection(this);
+    endtask : run_phase
+
+endclass : reg_hw_reset_test
+
+class reg_access_test extends base_test;
+
+    `uvm_component_utils(reg_access_test)
+
+    function new(string name, uvm_component parent);
+        super.new(name, parent);
+    endfunction
+
+    task run_phase(uvm_phase phase);
+        uvm_reg_access_seq seq;
+        `uvm_info(get_type_name(), "This is the reg_access test's run phase", UVM_DEBUG)
+        phase.phase_done.set_drain_time(this, 1us);
+
+        phase.raise_objection(this);
+
+        seq = uvm_reg_access_seq::type_id::create("seq");
+        seq.model = regs;
+        seq.start(spi_master.get_sequencer());
+
+        phase.drop_objection(this);
+    endtask : run_phase
+
+endclass : reg_access_test
+
+class pdm_clk_test extends base_test;
+
+    `uvm_component_utils(pdm_clk_test)
 
     function new(string name, uvm_component parent);
         super.new(name, parent);
@@ -117,21 +157,23 @@ class pdm_to_pcm_top_clk_test extends base_test;
 
     task run_phase(uvm_phase phase);
         `uvm_info(get_type_name(), "This is the clock test's run phase", UVM_DEBUG)
-        phase.phase_done.set_drain_time(this, 1ms);
+        phase.phase_done.set_drain_time(this, 100us);
 
         phase.raise_objection(this);
 
-        #1us;
+        regs.control_high.randomize();
+        regs.control_high.update(status);
 
-        regs.control_high.write(status, 8'hFF, UVM_BACKDOOR);
-        regs.control_low.write(status, 8'hFF, UVM_BACKDOOR);
+        regs.control_low.randomize();
+        regs.control_low.update(status);
+
         regs.control.enable.set(1'b1);
-        regs.control.update(status, UVM_BACKDOOR);
+        regs.control.update(status);
 
         phase.drop_objection(this);
 
     endtask : run_phase
 
-endclass : pdm_to_pcm_top_clk_test
+endclass : pdm_clk_test
 
 `endif

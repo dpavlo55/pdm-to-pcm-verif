@@ -10,7 +10,7 @@ class spi_reg_adapter extends uvm_reg_adapter;
     function new(string name = "spi_reg_adapter");
         super.new(name);
         supports_byte_enable = 1'b0;
-        provides_responses = 1'b0;
+        provides_responses = 1'b1;
     endfunction : new
 
     virtual function uvm_sequence_item reg2bus(const ref uvm_reg_bus_op rw);
@@ -26,7 +26,7 @@ class spi_reg_adapter extends uvm_reg_adapter;
         if (item.cmd == item_t::SPI_WRITE) begin
             item.data = rw.data;
         end else begin
-            item.data = 'hBB;
+            item.data = 'h00;
         end
 
         reg_item = this.get_item();

@@ -11,6 +11,7 @@ class spi_driver extends uvm_driver #(spi_seq_item);
 
     protected vif_t vif;
     protected spi_configuration configuration;
+    uvm_tlm_analysis_fifo #(spi_seq_item) rsp_fifo;
 
     // class constructor
     function new(string name = "spi_driver", uvm_component parent = null);
@@ -28,6 +29,7 @@ class spi_driver extends uvm_driver #(spi_seq_item);
         end
 
         vif = configuration.get_vif();
+        this.rsp_fifo = new("rsp_fifo", this);
     endfunction : build_phase
 
     task reset();
@@ -58,7 +60,8 @@ class spi_driver extends uvm_driver #(spi_seq_item);
     endtask : transaction
 
     virtual task run_phase(uvm_phase phase);
-        item_t item;
+        item_t req;
+        item_t rsp;
 
         reset();
 
@@ -66,14 +69,18 @@ class spi_driver extends uvm_driver #(spi_seq_item);
 
         forever begin
             // get the next item from the sequencer
-            seq_item_port.get_next_item(item);
+            seq_item_port.get_next_item(req);
 
-            item.print();
+            `uvm_info(get_type_name(), $sformatf("%s", req.convert2string()), UVM_HIGH)
 
-            transaction(item);
+            transaction(req);
 
-            // signal to the sequencer that the item has been processed
-            seq_item_port.item_done();
+            // wait for monitor to capture the completed transaction (with real MISO data)
+            this.rsp_fifo.get(rsp);
+            rsp.set_id_info(req);
+
+            // return monitor's response item to the RAL sequence
+            seq_item_port.item_done(rsp);
         end
     endtask : run_phase
 

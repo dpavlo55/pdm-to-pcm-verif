@@ -30,8 +30,11 @@ class spi_seq_item extends uvm_sequence_item;
         s = {s, $sformatf("\nSPI transaction:\n")};
         s = {s, $sformatf("  cmd  : %s\n", cmd.name())};
         s = {s, $sformatf("  addr : 0x%2h (%s)\n", addr, reg_name)};
-        //s = {s, $sformatf("  reg  : %s\n", reg_name)};
-        s = {s, $sformatf("  data : 0x%2h\n", data)};
+        if (cmd == SPI_WRITE)
+            s = {s, $sformatf("  data : 0x%2h\n", data)};
+        else begin
+            s = {s, $sformatf("  data : --\n")};
+        end
         return s;
     endfunction : convert2string
 
@@ -77,7 +80,6 @@ class spi_seq_item extends uvm_sequence_item;
         recorder.record_string("cmd", cmd.name());
         recorder.record_string("reg", reg_name);
         recorder.record_field("addr", addr, $bits(addr), UVM_HEX);
-        //recorder.record_string("addr", $sformatf("%2h (%s)", addr, reg_name));
         recorder.record_field("data", data, $bits(data), UVM_HEX);
     endfunction : do_record
 

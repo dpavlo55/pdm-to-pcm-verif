@@ -56,8 +56,6 @@ class spi_monitor extends uvm_monitor;
             end
             item.reg_name = "UNKNOWN";
 
-            item.print();
-
             output_ap.write(item);
         end
     endtask : run_phase
