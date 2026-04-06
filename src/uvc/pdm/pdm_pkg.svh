@@ -5,6 +5,8 @@ package pdm_pkg;
 
     timeunit 1ns / 1ps;
 
+    import "DPI-C" pure function real sin(input real x);
+
     import uvm_pkg::*;
     `include "uvm_macros.svh"
 

@@ -16,6 +16,7 @@
 
 # PDM
 ../rtl/src/pdm_clk_gen.sv
+../rtl/src/pdm_sampler.sv
 
 # top-level
 ../rtl/src/pdm_to_pcm_top.sv

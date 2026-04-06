@@ -39,8 +39,10 @@ class pdm_agent extends uvm_agent;
     endfunction : build_phase
 
     virtual function void connect_phase(uvm_phase phase);
-        if (configuration.get_is_active() == UVM_ACTIVE)
+        if (configuration.get_is_active() == UVM_ACTIVE) begin
             driver.seq_item_port.connect(sequencer.seq_item_export);
+            monitor.request_ap.connect(sequencer.request_ep);
+        end
     endfunction : connect_phase
 
 endclass : pdm_agent

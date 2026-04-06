@@ -12,6 +12,7 @@ class pdm_seq_item extends uvm_sequence_item;
     // parameters
 
     // sequence items
+    logic [0:0] pdm_data;
 
     function new(string name = "pdm_seq_item");
         super.new(name);
@@ -19,7 +20,7 @@ class pdm_seq_item extends uvm_sequence_item;
 
     virtual function string convert2string();
         string s = super.convert2string();
-        // your code here
+        s = $sformatf("%s, pdm_data=%0b", s, pdm_data);
         return s;
     endfunction : convert2string
 
@@ -28,14 +29,15 @@ class pdm_seq_item extends uvm_sequence_item;
         if (!$cast(item, rhs))
             `uvm_fatal(get_type_name(), "Illegal rhs argument of do_copy method")
         super.do_copy(rhs);
-        // your code here
+        this.pdm_data = item.pdm_data;
     endfunction : do_copy
 
     virtual function bit do_compare(uvm_object rhs, uvm_comparer comparer);
         this_t item;
         if (!$cast(item, rhs))
             `uvm_fatal(get_type_name(), "Illegal rhs argument of do_compare method")
-        // your code here
+        if (this.pdm_data != item.pdm_data)
+            return 0;
         return 1'b1;
     endfunction : do_compare
 

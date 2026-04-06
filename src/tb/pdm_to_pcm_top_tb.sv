@@ -25,12 +25,13 @@ module pdm_to_pcm_top_tb;
 
     // interfaces
     spi_if spi_if_inst();
+    pdm_if pdm_if_inst();
 
     pdm_to_pcm_top dut (
         .clk (clk),
         .rst_n (rst_n),
-        .pdm_in (pdm_in),
-        .pdm_in_valid (pdm_in_valid),
+        .pdm_clk (pdm_if_inst.clk),
+        .pdm_data (pdm_if_inst.data),
         .spi_sck (spi_if_inst.sck),
         .spi_mosi (spi_if_inst.mosi),
         .spi_miso (spi_if_inst.miso),
@@ -102,6 +103,8 @@ module pdm_to_pcm_top_tb;
         // Set the virtual interface in the resource database
         uvm_resource_db#(virtual interface spi_if)::set(
             uvm_top.get_full_name(), "spi_if", spi_if_inst, null);
+        uvm_resource_db#(virtual interface pdm_if)::set(
+            uvm_top.get_full_name(), "pdm_if", pdm_if_inst, null);
         // Run the UVM test
         run_test();
     end

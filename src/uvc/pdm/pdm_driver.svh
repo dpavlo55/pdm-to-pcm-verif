@@ -26,14 +26,36 @@ class pdm_driver extends uvm_driver #(pdm_seq_item);
             `uvm_fatal(get_type_name(),
                 "Failed to retrive PDM configuration from uvm_resource_db")
         end
+
+        vif = configuration.get_vif();
     endfunction : build_phase
 
-    virtual task automatic delay(input int NUMBER_OF_DELAY_CYCLES = 1);
-        // your code here
-    endtask : delay
+    virtual task wait_active_edge();
+        if (configuration.get_side() == pdm_configuration::MIC_RIGHT)
+            @(posedge vif.clk);
+        else
+            @(negedge vif.clk);
+    endtask : wait_active_edge
+
+    virtual task wait_release_edge();
+        if (configuration.get_side() == pdm_configuration::MIC_RIGHT)
+            @(negedge vif.clk);
+        else
+            @(posedge vif.clk);
+    endtask : wait_release_edge
 
     virtual task run_phase(uvm_phase phase);
-        // your code here
+        forever begin
+            wait_active_edge();
+            seq_item_port.get_next_item(req);
+            #(configuration.get_output_enable_delay() * 1s);
+            vif.pdm_data <= req.pdm_data;
+            vif.pdm_en <= 1'b1;
+            wait_release_edge();
+            #(configuration.get_output_disable_delay() * 1s);
+            vif.pdm_en <= 1'b0;
+            seq_item_port.item_done();
+        end
     endtask : run_phase
 
 endclass : pdm_driver

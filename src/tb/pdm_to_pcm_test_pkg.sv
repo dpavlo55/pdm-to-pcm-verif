@@ -4,7 +4,8 @@ package pdm_to_pcm_test_pkg;
     `include "uvm_macros.svh"
 
     // UVC packages
-    import spi_pkg::*;   // needed if tests reference spi_agent, spi_configuration, etc.
+    import spi_pkg::*;
+    import pdm_pkg::*;
 
     // RAL package
     import pdm_to_pcm_reg_pkg::*;

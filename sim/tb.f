@@ -1,8 +1,10 @@
 # interfaces
 ../src/uvc/spi/spi_if.sv
+../src/uvc/pdm/pdm_if.sv
 
 # UVC packages
 ../src/uvc/spi/spi_pkg.svh
+../src/uvc/pdm/pdm_pkg.svh
 
 # testbench
 ../src/tb/pdm_to_pcm_reg_pkg.sv
