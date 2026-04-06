@@ -157,15 +157,16 @@ class pdm_clk_test extends base_test;
 
     task run_phase(uvm_phase phase);
         `uvm_info(get_type_name(), "This is the clock test's run phase", UVM_DEBUG)
-        phase.phase_done.set_drain_time(this, 100us);
+        phase.phase_done.set_drain_time(this, 10ms);
 
         phase.raise_objection(this);
 
-        regs.control_high.randomize();
-        regs.control_high.update(status);
+        //regs.control_high.randomize();
+        //regs.control_high.update(status);
+        //regs.control_low.randomize();
+        //regs.control_low.update(status);
 
-        regs.control_low.randomize();
-        regs.control_low.update(status);
+        regs.nco_control.write(status, 16'd2884);
 
         regs.control.enable.set(1'b1);
         regs.control.update(status);
