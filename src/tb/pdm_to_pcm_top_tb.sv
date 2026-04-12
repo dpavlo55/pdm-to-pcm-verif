@@ -92,10 +92,10 @@ module pdm_to_pcm_top_tb;
         `uvm_info("PDM_GEN", "PDM file playback complete", UVM_LOW)
     endtask : gen_pdm_from_file
 
-    initial begin
-        gen_pdm_from_file(PDM_FILE);
-        #100ns;
-    end
+    //initial begin
+    //    gen_pdm_from_file(PDM_FILE);
+    //    #100ns;
+    //end
 
     // UVM testbench initialization
     initial begin

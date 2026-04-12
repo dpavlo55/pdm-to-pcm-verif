@@ -204,20 +204,24 @@ class pdm_clk_test extends base_test;
     function void build_phase(uvm_phase phase);
         super.build_phase(phase);
 
+        set_type_override_by_type(
+            sine_modulator::get_type(),
+            sine_modulator::get_type());
+
         seq_left = pdm_seq::type_id::create("seq_left");
         modulator_left = sine_modulator::type_id::create("modulator_left");
-        modulator_left.set_parameters(3.3e3, 0.9, 0.0);
+        modulator_left.set_parameters(1e3, 0.9, 0.0);
         seq_left.set_modulator(modulator_left);
 
         seq_right = pdm_seq::type_id::create("seq_right");
         modulator_right = sine_modulator::type_id::create("modulator_right");
-        modulator_right.set_parameters(2.0e3, 0.9, 0.0);
+        modulator_right.set_parameters(2e3, 0.5, 0.0, 0.25);
         seq_right.set_modulator(modulator_right);
     endfunction : build_phase
 
     task run_phase(uvm_phase phase);
         `uvm_info(get_type_name(), "This is the clock test's run phase", UVM_DEBUG)
-        phase.phase_done.set_drain_time(this, 10ms);
+        phase.phase_done.set_drain_time(this, 20ms);
         phase.raise_objection(this);
 
         fork

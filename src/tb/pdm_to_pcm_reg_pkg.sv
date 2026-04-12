@@ -7,8 +7,6 @@ package pdm_to_pcm_reg_pkg;
     // reg - pdm_to_pcm_reg.control
     class pdm_to_pcm_reg__control extends uvm_reg;
         rand uvm_reg_field enable;
-        rand uvm_reg_field divider;
-        rand uvm_reg_field test;
 
         function new(string name = "pdm_to_pcm_reg__control");
             super.new(name, 8, UVM_NO_COVERAGE);
@@ -17,68 +15,8 @@ package pdm_to_pcm_reg_pkg;
         virtual function void build();
             this.enable = new("enable");
             this.enable.configure(this, 1, 0, "RW", 0, 'h0, 1, 1, 0);
-            this.divider = new("divider");
-            this.divider.configure(this, 2, 1, "RW", 0, 'h0, 1, 1, 0);
-            this.test = new("test");
-            this.test.configure(this, 5, 3, "RW", 0, 'h0, 1, 1, 0);
         endfunction : build
     endclass : pdm_to_pcm_reg__control
-
-    // reg - pdm_to_pcm_reg.data
-    class pdm_to_pcm_reg__data extends uvm_reg;
-        rand uvm_reg_field value;
-
-        function new(string name = "pdm_to_pcm_reg__data");
-            super.new(name, 8, UVM_NO_COVERAGE);
-        endfunction : new
-
-        virtual function void build();
-            this.value = new("value");
-            this.value.configure(this, 8, 0, "RO", 0, 'h0, 1, 1, 0);
-        endfunction : build
-    endclass : pdm_to_pcm_reg__data
-
-    // reg - pdm_to_pcm_reg.id
-    class pdm_to_pcm_reg__id extends uvm_reg;
-        rand uvm_reg_field ID;
-
-        function new(string name = "pdm_to_pcm_reg__id");
-            super.new(name, 8, UVM_NO_COVERAGE);
-        endfunction : new
-
-        virtual function void build();
-            this.ID = new("ID");
-            this.ID.configure(this, 8, 0, "RO", 0, 'hda, 1, 1, 0);
-        endfunction : build
-    endclass : pdm_to_pcm_reg__id
-
-    // reg - pdm_to_pcm_reg.control_low
-    class pdm_to_pcm_reg__control_low extends uvm_reg;
-        rand uvm_reg_field value;
-
-        function new(string name = "pdm_to_pcm_reg__control_low");
-            super.new(name, 8, UVM_NO_COVERAGE);
-        endfunction : new
-
-        virtual function void build();
-            this.value = new("value");
-            this.value.configure(this, 8, 0, "RW", 0, 'h0, 1, 1, 0);
-        endfunction : build
-    endclass : pdm_to_pcm_reg__control_low
-
-    // reg - pdm_to_pcm_reg.control_high
-    class pdm_to_pcm_reg__control_high extends uvm_reg;
-        rand uvm_reg_field value;
-
-        function new(string name = "pdm_to_pcm_reg__control_high");
-            super.new(name, 8, UVM_NO_COVERAGE);
-        endfunction : new
-
-        virtual function void build();
-            this.value = new("value");
-            this.value.configure(this, 8, 0, "RW", 0, 'h0, 1, 1, 0);
-        endfunction : build
-    endclass : pdm_to_pcm_reg__control_high
 
     // reg - pdm_to_pcm_reg.nco_control
     class pdm_to_pcm_reg__nco_control extends uvm_reg;
@@ -97,14 +35,55 @@ package pdm_to_pcm_reg_pkg;
         endfunction : build
     endclass : pdm_to_pcm_reg__nco_control
 
+    // reg - pdm_to_pcm_reg.data_right
+    class pdm_to_pcm_reg__data_right extends uvm_reg;
+        rand uvm_reg_field value;
+
+        function new(string name = "pdm_to_pcm_reg__data_right");
+            super.new(name, 8, UVM_NO_COVERAGE);
+        endfunction : new
+
+        virtual function void build();
+            this.value = new("value");
+            this.value.configure(this, 8, 0, "RO", 1, 'h0, 1, 1, 0);
+        endfunction : build
+    endclass : pdm_to_pcm_reg__data_right
+
+    // reg - pdm_to_pcm_reg.data_left
+    class pdm_to_pcm_reg__data_left extends uvm_reg;
+        rand uvm_reg_field value;
+
+        function new(string name = "pdm_to_pcm_reg__data_left");
+            super.new(name, 8, UVM_NO_COVERAGE);
+        endfunction : new
+
+        virtual function void build();
+            this.value = new("value");
+            this.value.configure(this, 8, 0, "RO", 1, 'h0, 1, 1, 0);
+        endfunction : build
+    endclass : pdm_to_pcm_reg__data_left
+
+    // reg - pdm_to_pcm_reg.id
+    class pdm_to_pcm_reg__id extends uvm_reg;
+        rand uvm_reg_field value;
+
+        function new(string name = "pdm_to_pcm_reg__id");
+            super.new(name, 8, UVM_NO_COVERAGE);
+        endfunction : new
+
+        virtual function void build();
+            this.value = new("value");
+            this.value.configure(this, 8, 0, "RO", 0, 'hda, 1, 1, 0);
+        endfunction : build
+    endclass : pdm_to_pcm_reg__id
+
     // addrmap - pdm_to_pcm_reg
     class pdm_to_pcm_reg extends uvm_reg_block;
         rand pdm_to_pcm_reg__control control;
-        rand pdm_to_pcm_reg__data data;
-        rand pdm_to_pcm_reg__id id;
-        rand pdm_to_pcm_reg__control_low control_low;
-        rand pdm_to_pcm_reg__control_high control_high;
         rand pdm_to_pcm_reg__nco_control nco_control;
+        rand pdm_to_pcm_reg__data_right data_right;
+        rand pdm_to_pcm_reg__data_left data_left;
+        rand pdm_to_pcm_reg__id id;
 
         function new(string name = "pdm_to_pcm_reg");
             super.new(name);
@@ -115,36 +94,29 @@ package pdm_to_pcm_reg_pkg;
             this.control = new("control");
             this.control.configure(this);
             this.control.add_hdl_path_slice("control_enable", 0, 1);
-            this.control.add_hdl_path_slice("control_divider", 1, 2);
-            this.control.add_hdl_path_slice("control_test", 3, 5);
             this.control.build();
             this.default_map.add_reg(this.control, 'h0);
-            this.data = new("data");
-            this.data.configure(this);
-            this.data.add_hdl_path_slice("data_value", 0, 8);
-            this.data.build();
-            this.default_map.add_reg(this.data, 'h1);
-            this.id = new("id");
-            this.id.configure(this);
-            this.id.add_hdl_path_slice("id_ID", 0, 8);
-            this.id.build();
-            this.default_map.add_reg(this.id, 'h2);
-            this.control_low = new("control_low");
-            this.control_low.configure(this);
-            this.control_low.add_hdl_path_slice("control_low_value", 0, 8);
-            this.control_low.build();
-            this.default_map.add_reg(this.control_low, 'h3);
-            this.control_high = new("control_high");
-            this.control_high.configure(this);
-            this.control_high.add_hdl_path_slice("control_high_value", 0, 8);
-            this.control_high.build();
-            this.default_map.add_reg(this.control_high, 'h4);
             this.nco_control = new("nco_control");
             this.nco_control.configure(this);
             this.nco_control.add_hdl_path_slice("nco_control_low", 0, 8);
             this.nco_control.add_hdl_path_slice("nco_control_high", 8, 8);
             this.nco_control.build();
-            this.default_map.add_reg(this.nco_control, 'h6);
+            this.default_map.add_reg(this.nco_control, 'h2);
+            this.data_right = new("data_right");
+            this.data_right.configure(this);
+            this.data_right.add_hdl_path_slice("data_right_value", 0, 8);
+            this.data_right.build();
+            this.default_map.add_reg(this.data_right, 'h4);
+            this.data_left = new("data_left");
+            this.data_left.configure(this);
+            this.data_left.add_hdl_path_slice("data_left_value", 0, 8);
+            this.data_left.build();
+            this.default_map.add_reg(this.data_left, 'h5);
+            this.id = new("id");
+            this.id.configure(this);
+            this.id.add_hdl_path_slice("id_value", 0, 8);
+            this.id.build();
+            this.default_map.add_reg(this.id, 'h6);
         endfunction : build
     endclass : pdm_to_pcm_reg
 
