@@ -204,10 +204,6 @@ class pdm_clk_test extends base_test;
     function void build_phase(uvm_phase phase);
         super.build_phase(phase);
 
-        set_type_override_by_type(
-            sine_modulator::get_type(),
-            sine_modulator::get_type());
-
         seq_left = pdm_seq::type_id::create("seq_left");
         modulator_left = sine_modulator::type_id::create("modulator_left");
         modulator_left.set_parameters(1e3, 0.9, 0.0);
@@ -229,7 +225,7 @@ class pdm_clk_test extends base_test;
             seq_right.start(pdm_mic_right.get_sequencer());
         join_none
 
-        regs.nco_control.write(status, 16'd2884 * 2);
+        regs.nco_control.write(status, 16'd4027);  // ~48kHz output with 50MHz input clock
 
         regs.control.enable.set(1'b1);
         regs.control.update(status);

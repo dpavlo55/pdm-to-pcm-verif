@@ -18,6 +18,9 @@
 ../rtl/src/pdm_clk_gen.sv
 ../rtl/src/pdm_sampler.sv
 
+# I2S transmitter
+../rtl/src/i2s.sv
+
 # top-level
 ../rtl/src/pdm_to_pcm_top.sv
 ../rtl/src/tt_um_top.sv
