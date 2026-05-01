@@ -49,7 +49,7 @@ class pdm_driver extends uvm_driver #(pdm_seq_item);
             wait_active_edge();
             seq_item_port.get_next_item(req);
             #(configuration.get_output_enable_delay() * 1s);
-            vif.pdm_data <= req.pdm_data;
+            vif.pdm_data <= req.data;
             vif.pdm_en <= 1'b1;
             wait_release_edge();
             #(configuration.get_output_disable_delay() * 1s);

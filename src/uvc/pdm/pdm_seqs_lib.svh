@@ -337,7 +337,7 @@ class pdm_seq extends pdm_base_seq;
         forever begin
             p_sequencer.request_fifo.get(item);
             start_item(item);
-            item.pdm_data = modulator.modulate();
+            item.data = modulator.modulate();
             finish_item(item);
         end
     endtask : body

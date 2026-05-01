@@ -1,7 +1,7 @@
 onerror resume
 wave tags 
 wave update off
-wave zoom range 2216434370 2246319901
+wave zoom range 0 20052000000
 wave group Transaction -backgroundcolor #006666
 wave insertion [expr [wave index insertpoint] + 1]
 wave group pdm_to_pcm_top_tb.spi_if_inst -backgroundcolor #004466
@@ -20,35 +20,18 @@ wave add -group pdm_to_pcm_top_tb.pdm_if_inst pdm_to_pcm_top_tb.pdm_if_inst.data
 wave add -group pdm_to_pcm_top_tb.pdm_if_inst pdm_to_pcm_top_tb.pdm_if_inst.pdm_data -tag F0 -radix hexadecimal
 wave add -group pdm_to_pcm_top_tb.pdm_if_inst pdm_to_pcm_top_tb.pdm_if_inst.pdm_en -tag F0 -radix hexadecimal
 wave insertion [expr [wave index insertpoint] + 1]
-wave group pdm_to_pcm_top_tb.dut -backgroundcolor #226600
+wave group pdm_to_pcm_top_tb.dut -backgroundcolor #004466
 wave add -group pdm_to_pcm_top_tb.dut pdm_to_pcm_top_tb.dut.clk -tag F0 -radix hexadecimal
 wave add -group pdm_to_pcm_top_tb.dut pdm_to_pcm_top_tb.dut.rst_n -tag F0 -radix hexadecimal
+wave add -group pdm_to_pcm_top_tb.dut pdm_to_pcm_top_tb.dut.pdm_clk -tag F0 -radix hexadecimal
+wave add -group pdm_to_pcm_top_tb.dut pdm_to_pcm_top_tb.dut.pdm_data -tag F0 -radix hexadecimal
 wave add -group pdm_to_pcm_top_tb.dut pdm_to_pcm_top_tb.dut.spi_sck -tag F0 -radix hexadecimal
 wave add -group pdm_to_pcm_top_tb.dut pdm_to_pcm_top_tb.dut.spi_mosi -tag F0 -radix hexadecimal
 wave add -group pdm_to_pcm_top_tb.dut pdm_to_pcm_top_tb.dut.spi_miso -tag F0 -radix hexadecimal
 wave add -group pdm_to_pcm_top_tb.dut pdm_to_pcm_top_tb.dut.spi_cs_n -tag F0 -radix hexadecimal
-wave add -group pdm_to_pcm_top_tb.dut pdm_to_pcm_top_tb.dut.s_cpuif_req -tag F0 -radix hexadecimal
-wave add -group pdm_to_pcm_top_tb.dut pdm_to_pcm_top_tb.dut.s_cpuif_req_is_wr -tag F0 -radix hexadecimal
-wave add -group pdm_to_pcm_top_tb.dut pdm_to_pcm_top_tb.dut.s_cpuif_addr -tag F0 -radix hexadecimal
-wave add -group pdm_to_pcm_top_tb.dut pdm_to_pcm_top_tb.dut.s_cpuif_wr_data -tag F0 -radix hexadecimal
-wave add -group pdm_to_pcm_top_tb.dut pdm_to_pcm_top_tb.dut.s_cpuif_rd_ack -tag F0 -radix hexadecimal
-wave add -group pdm_to_pcm_top_tb.dut pdm_to_pcm_top_tb.dut.s_cpuif_rd_data -tag F0 -radix hexadecimal
-wave add -group pdm_to_pcm_top_tb.dut pdm_to_pcm_top_tb.dut.s_cpuif_wr_ack -tag F0 -radix hexadecimal
-wave add -group pdm_to_pcm_top_tb.dut pdm_to_pcm_top_tb.dut.hwif_out -tag F0 -radix string
-wave add -group pdm_to_pcm_top_tb.dut pdm_to_pcm_top_tb.dut.clk -tag F0 -radix hexadecimal
-wave add -group pdm_to_pcm_top_tb.dut pdm_to_pcm_top_tb.dut.rst_n -tag F0 -radix hexadecimal
-wave add -group pdm_to_pcm_top_tb.dut pdm_to_pcm_top_tb.dut.spi_sck -tag F0 -radix hexadecimal
-wave add -group pdm_to_pcm_top_tb.dut pdm_to_pcm_top_tb.dut.spi_mosi -tag F0 -radix hexadecimal
-wave add -group pdm_to_pcm_top_tb.dut pdm_to_pcm_top_tb.dut.spi_miso -tag F0 -radix hexadecimal
-wave add -group pdm_to_pcm_top_tb.dut pdm_to_pcm_top_tb.dut.spi_cs_n -tag F0 -radix hexadecimal
-wave add -group pdm_to_pcm_top_tb.dut pdm_to_pcm_top_tb.dut.s_cpuif_req -tag F0 -radix hexadecimal
-wave add -group pdm_to_pcm_top_tb.dut pdm_to_pcm_top_tb.dut.s_cpuif_req_is_wr -tag F0 -radix hexadecimal
-wave add -group pdm_to_pcm_top_tb.dut pdm_to_pcm_top_tb.dut.s_cpuif_addr -tag F0 -radix hexadecimal
-wave add -group pdm_to_pcm_top_tb.dut pdm_to_pcm_top_tb.dut.s_cpuif_wr_data -tag F0 -radix hexadecimal
-wave add -group pdm_to_pcm_top_tb.dut pdm_to_pcm_top_tb.dut.s_cpuif_rd_ack -tag F0 -radix hexadecimal
-wave add -group pdm_to_pcm_top_tb.dut pdm_to_pcm_top_tb.dut.s_cpuif_rd_data -tag F0 -radix hexadecimal
-wave add -group pdm_to_pcm_top_tb.dut pdm_to_pcm_top_tb.dut.s_cpuif_wr_ack -tag F0 -radix hexadecimal
-wave add -group pdm_to_pcm_top_tb.dut pdm_to_pcm_top_tb.dut.hwif_out -tag F0 -radix string
+wave add -group pdm_to_pcm_top_tb.dut pdm_to_pcm_top_tb.dut.i2s_bclk -tag F0 -radix hexadecimal
+wave add -group pdm_to_pcm_top_tb.dut pdm_to_pcm_top_tb.dut.i2s_lrclk -tag F0 -radix hexadecimal
+wave add -group pdm_to_pcm_top_tb.dut pdm_to_pcm_top_tb.dut.i2s_sdata -tag F0 -radix hexadecimal
 wave insertion [expr [wave index insertpoint] + 1]
 wave group pdm_to_pcm_top_tb.dut.spi_inst -backgroundcolor #666600
 wave add -group pdm_to_pcm_top_tb.dut.spi_inst pdm_to_pcm_top_tb.dut.spi_inst.clk -tag F0 -radix hexadecimal
@@ -161,33 +144,30 @@ wave add -group pdm_to_pcm_top_tb.dut.cic_right_inst pdm_to_pcm_top_tb.dut.cic_r
 wave add -group pdm_to_pcm_top_tb.dut.cic_right_inst pdm_to_pcm_top_tb.dut.cic_right_inst.rst_n -tag F0 -radix hexadecimal
 wave add -group pdm_to_pcm_top_tb.dut.cic_right_inst {pdm_to_pcm_top_tb.dut.cic_right_inst.sig_in[0]} -tag F0 -radix hexadecimal
 wave add -group pdm_to_pcm_top_tb.dut.cic_right_inst pdm_to_pcm_top_tb.dut.cic_right_inst.sig_in_valid -tag F0 -radix hexadecimal
-wave add -group pdm_to_pcm_top_tb.dut.cic_right_inst pdm_to_pcm_top_tb.dut.cic_right_inst.sig_out -tag F0 -radix hexadecimal
+wave add -group pdm_to_pcm_top_tb.dut.cic_right_inst pdm_to_pcm_top_tb.dut.cic_right_inst.sig_out -tag F0 -radix hexadecimal -representation twoscomplement -display analogfull -analogdraw step
 wave add -group pdm_to_pcm_top_tb.dut.cic_right_inst pdm_to_pcm_top_tb.dut.cic_right_inst.sig_out_valid -tag F0 -radix hexadecimal
 wave insertion [expr [wave index insertpoint] + 1]
 wave group pdm_to_pcm_top_tb.dut.i2s_inst -backgroundcolor #004466
-wave add -group pdm_to_pcm_top_tb.dut.i2s_inst pdm_to_pcm_top_tb.dut.i2s_inst.BCLK_DIV -tag F0 -radix hexadecimal
 wave add -group pdm_to_pcm_top_tb.dut.i2s_inst pdm_to_pcm_top_tb.dut.i2s_inst.clk -tag F0 -radix hexadecimal
 wave add -group pdm_to_pcm_top_tb.dut.i2s_inst pdm_to_pcm_top_tb.dut.i2s_inst.rst_n -tag F0 -radix hexadecimal
-wave add -group pdm_to_pcm_top_tb.dut.i2s_inst pdm_to_pcm_top_tb.dut.i2s_inst.data_left -tag F0 -radix hexadecimal
+wave add -group pdm_to_pcm_top_tb.dut.i2s_inst pdm_to_pcm_top_tb.dut.i2s_inst.data_left -tag F0 -radix binary
 wave add -group pdm_to_pcm_top_tb.dut.i2s_inst pdm_to_pcm_top_tb.dut.i2s_inst.data_left_valid -tag F0 -radix hexadecimal
-wave add -group pdm_to_pcm_top_tb.dut.i2s_inst pdm_to_pcm_top_tb.dut.i2s_inst.data_right -tag F0 -radix hexadecimal
+wave add -group pdm_to_pcm_top_tb.dut.i2s_inst pdm_to_pcm_top_tb.dut.i2s_inst.data_right -tag F0 -radix binary
 wave add -group pdm_to_pcm_top_tb.dut.i2s_inst pdm_to_pcm_top_tb.dut.i2s_inst.data_right_valid -tag F0 -radix hexadecimal
+wave add -group pdm_to_pcm_top_tb.dut.i2s_inst pdm_to_pcm_top_tb.dut.i2s_inst.pdm_clk -tag F0 -radix hexadecimal
+wave add -group pdm_to_pcm_top_tb.dut.i2s_inst pdm_to_pcm_top_tb.dut.i2s_inst.pdm_clk_re -tag F0 -radix hexadecimal
+wave add -group pdm_to_pcm_top_tb.dut.i2s_inst pdm_to_pcm_top_tb.dut.i2s_inst.pdm_clk_fe -tag F0 -radix hexadecimal
 wave add -group pdm_to_pcm_top_tb.dut.i2s_inst pdm_to_pcm_top_tb.dut.i2s_inst.bclk -tag F0 -radix hexadecimal
 wave add -group pdm_to_pcm_top_tb.dut.i2s_inst pdm_to_pcm_top_tb.dut.i2s_inst.lrclk -tag F0 -radix hexadecimal
 wave add -group pdm_to_pcm_top_tb.dut.i2s_inst pdm_to_pcm_top_tb.dut.i2s_inst.sdata -tag F0 -radix hexadecimal
-wave add -group pdm_to_pcm_top_tb.dut.i2s_inst pdm_to_pcm_top_tb.dut.i2s_inst.BCLK_HALF -tag F0 -radix hexadecimal
-wave add -group pdm_to_pcm_top_tb.dut.i2s_inst pdm_to_pcm_top_tb.dut.i2s_inst.BCLK_CNT_W -tag F0 -radix hexadecimal
-wave add -group pdm_to_pcm_top_tb.dut.i2s_inst pdm_to_pcm_top_tb.dut.i2s_inst.WORD_BITS -tag F0 -radix hexadecimal
-wave add -group pdm_to_pcm_top_tb.dut.i2s_inst pdm_to_pcm_top_tb.dut.i2s_inst.FRAME_BITS -tag F0 -radix hexadecimal
-wave add -group pdm_to_pcm_top_tb.dut.i2s_inst pdm_to_pcm_top_tb.dut.i2s_inst.BIT_CNT_W -tag F0 -radix hexadecimal
-wave add -group pdm_to_pcm_top_tb.dut.i2s_inst pdm_to_pcm_top_tb.dut.i2s_inst.LAST_BIT -tag F0 -radix hexadecimal
-wave add -group pdm_to_pcm_top_tb.dut.i2s_inst pdm_to_pcm_top_tb.dut.i2s_inst.CHANNEL_BOUNDARY -tag F0 -radix hexadecimal
-wave add -group pdm_to_pcm_top_tb.dut.i2s_inst pdm_to_pcm_top_tb.dut.i2s_inst.bclk_cnt -tag F0 -radix hexadecimal
-wave add -group pdm_to_pcm_top_tb.dut.i2s_inst pdm_to_pcm_top_tb.dut.i2s_inst.bclk_fe -tag F0 -radix hexadecimal
-wave add -group pdm_to_pcm_top_tb.dut.i2s_inst pdm_to_pcm_top_tb.dut.i2s_inst.hold_left -tag F0 -radix hexadecimal
-wave add -group pdm_to_pcm_top_tb.dut.i2s_inst pdm_to_pcm_top_tb.dut.i2s_inst.hold_right -tag F0 -radix hexadecimal
-wave add -group pdm_to_pcm_top_tb.dut.i2s_inst pdm_to_pcm_top_tb.dut.i2s_inst.shift_reg -tag F0 -radix hexadecimal
-wave add -group pdm_to_pcm_top_tb.dut.i2s_inst pdm_to_pcm_top_tb.dut.i2s_inst.bit_cnt -tag F0 -radix hexadecimal
+wave add -group pdm_to_pcm_top_tb.dut.i2s_inst pdm_to_pcm_top_tb.dut.i2s_inst.LRCLK_LEFT -tag F0 -radix hexadecimal
+wave add -group pdm_to_pcm_top_tb.dut.i2s_inst pdm_to_pcm_top_tb.dut.i2s_inst.LRCLK_RIGHT -tag F0 -radix hexadecimal
+wave add -group pdm_to_pcm_top_tb.dut.i2s_inst pdm_to_pcm_top_tb.dut.i2s_inst.ready -tag F0 -radix hexadecimal
+wave add -group pdm_to_pcm_top_tb.dut.i2s_inst pdm_to_pcm_top_tb.dut.i2s_inst.reg_data_left -tag F0 -radix binary
+wave add -group pdm_to_pcm_top_tb.dut.i2s_inst pdm_to_pcm_top_tb.dut.i2s_inst.reg_data_right -tag F0 -radix binary
+wave add -group pdm_to_pcm_top_tb.dut.i2s_inst pdm_to_pcm_top_tb.dut.i2s_inst.bit_cnt -tag F0 -radix decimal
+wave add -group pdm_to_pcm_top_tb.dut.i2s_inst pdm_to_pcm_top_tb.dut.i2s_inst.lrclk_internal -tag F0 -radix hexadecimal
+wave add -group pdm_to_pcm_top_tb.dut.i2s_inst pdm_to_pcm_top_tb.dut.i2s_inst.bit_index -tag F0 -radix decimal
 wave insertion [expr [wave index insertpoint] + 1]
 wave group pdm_to_pcm_top_tb.dut.i2s_inst -collapse
 wave group pdm_to_pcm_top_tb.dut.cic_right_inst -collapse

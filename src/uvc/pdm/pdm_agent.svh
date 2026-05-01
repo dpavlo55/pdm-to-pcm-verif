@@ -10,6 +10,8 @@ class pdm_agent extends uvm_agent;
     protected pdm_sequencer sequencer;
     protected pdm_configuration configuration;
 
+    uvm_analysis_port #(pdm_seq_item) analysis_port;
+
     function new(string name = "pdm_agent", uvm_component parent = null);
         super.new(name, parent);
     endfunction : new
@@ -36,6 +38,8 @@ class pdm_agent extends uvm_agent;
 
         uvm_resource_db#(pdm_configuration)::set(
             {get_full_name(), ".*"}, "configuration", configuration, this);
+
+        analysis_port = new("analysis_port", this);
     endfunction : build_phase
 
     virtual function void connect_phase(uvm_phase phase);
@@ -43,6 +47,7 @@ class pdm_agent extends uvm_agent;
             driver.seq_item_port.connect(sequencer.seq_item_export);
             monitor.request_ap.connect(sequencer.request_ep);
         end
+        monitor.output_ap.connect(analysis_port);
     endfunction : connect_phase
 
 endclass : pdm_agent

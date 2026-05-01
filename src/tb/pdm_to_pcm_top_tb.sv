@@ -7,15 +7,15 @@ module pdm_to_pcm_top_tb;
 
     timeunit 1ns/1ps;
 
-    localparam real CLOCK_FREQUENCY  = 50.0e6;
-    localparam real CLOCK_PERIOD      = 1.0 / CLOCK_FREQUENCY;
-    localparam real PDM_SAMPLE_RATE   = 2.0e6;
-    localparam int  CLKS_PER_SAMPLE   = int'(CLOCK_FREQUENCY / PDM_SAMPLE_RATE); // 25
-    //localparam string PDM_FILE        = "pdm_10kHz_2MHz.txt";
-    localparam string PDM_FILE        = "pdm_2kHz_2MHz.txt";
-    //localparam string PDM_FILE        = "pdm_2kHz_4MHz.txt";
-    //localparam string PDM_FILE        = "pdm_10kHz_4MHz.txt";
-    //localparam string PDM_FILE        = "pdm_2kHz_2MHz_10ms.txt";
+    localparam real CLOCK_FREQUENCY = 50.0e6;
+    localparam real CLOCK_PERIOD = 1.0 / CLOCK_FREQUENCY;
+    localparam real PDM_SAMPLE_RATE = 2.0e6;
+    localparam int  CLKS_PER_SAMPLE = int'(CLOCK_FREQUENCY / PDM_SAMPLE_RATE);
+    //localparam string PDM_FILE = "pdm_10kHz_2MHz.txt";
+    localparam string PDM_FILE = "pdm_2kHz_2MHz.txt";
+    //localparam string PDM_FILE = "pdm_2kHz_4MHz.txt";
+    //localparam string PDM_FILE = "pdm_10kHz_4MHz.txt";
+    //localparam string PDM_FILE = "pdm_2kHz_2MHz_10ms.txt";
 
     // Clock and reset
     logic clk;
@@ -26,6 +26,7 @@ module pdm_to_pcm_top_tb;
     // interfaces
     spi_if spi_if_inst();
     pdm_if pdm_if_inst();
+    i2s_if i2s_if_inst();
 
     pdm_to_pcm_top dut (
         .clk (clk),
@@ -35,7 +36,10 @@ module pdm_to_pcm_top_tb;
         .spi_sck (spi_if_inst.sck),
         .spi_mosi (spi_if_inst.mosi),
         .spi_miso (spi_if_inst.miso),
-        .spi_cs_n (spi_if_inst.cs_n)
+        .spi_cs_n (spi_if_inst.cs_n),
+        .i2s_bclk (i2s_if_inst.bclk),
+        .i2s_lrclk (i2s_if_inst.lrclk),
+        .i2s_sdata (i2s_if_inst.sdata)
     );
 
     // Clock generation
@@ -105,6 +109,8 @@ module pdm_to_pcm_top_tb;
             uvm_top.get_full_name(), "spi_if", spi_if_inst, null);
         uvm_resource_db#(virtual interface pdm_if)::set(
             uvm_top.get_full_name(), "pdm_if", pdm_if_inst, null);
+        uvm_resource_db#(virtual interface i2s_if)::set(
+            uvm_top.get_full_name(), "i2s_if", i2s_if_inst, null);
         // Run the UVM test
         run_test();
     end

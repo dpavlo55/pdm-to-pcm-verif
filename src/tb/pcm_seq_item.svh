@@ -1,26 +1,19 @@
-`ifndef PDM_SEQ_ITEM_SVH
-`define PDM_SEQ_ITEM_SVH
+class pcm_seq_item extends uvm_sequence_item;
 
-class pdm_seq_item extends uvm_sequence_item;
+    `uvm_object_utils(pcm_seq_item)
 
-    `uvm_object_utils(pdm_seq_item)
+    typedef pcm_seq_item this_t;
 
-    typedef pdm_seq_item this_t;
+    int signed data;
 
-    // types
-
-    // parameters
-
-    // sequence items
-    logic [0:0] data;
-
-    function new(string name = "pdm_seq_item");
+    function new(string name = "pcm_seq_item");
         super.new(name);
     endfunction : new
 
     virtual function string convert2string();
         string s = super.convert2string();
-        s = $sformatf("%s, data=%0b", s, data);
+        s = {s, $sformatf("\nPCM sequence item:\n")};
+        s = {s, $sformatf("  data : 0x%4h\n", data)};
         return s;
     endfunction : convert2string
 
@@ -36,9 +29,8 @@ class pdm_seq_item extends uvm_sequence_item;
         this_t item;
         if (!$cast(item, rhs))
             `uvm_fatal(get_type_name(), "Illegal rhs argument of do_compare method")
-        if (this.data != item.data)
-            return 0;
-        return 1'b1;
+        return
+            (this.data == item.data);
     endfunction : do_compare
 
     virtual function void do_print(uvm_printer printer);
@@ -46,17 +38,16 @@ class pdm_seq_item extends uvm_sequence_item;
     endfunction : do_print
 
     virtual function void do_pack(uvm_packer packer);
-        return;
+        packer.pack_field_int(data, $bits(data));
     endfunction : do_pack
 
     virtual function void do_unpack(uvm_packer packer);
-        return;
+        data = packer.unpack_field_int($bits(data));
     endfunction : do_unpack
 
     virtual function void do_record(uvm_recorder recorder);
-        return;
+        recorder.record_field("data", data, $bits(data), UVM_HEX);
     endfunction : do_record
 
-endclass : pdm_seq_item
 
-`endif
+endclass : pcm_seq_item

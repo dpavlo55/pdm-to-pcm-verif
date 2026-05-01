@@ -1,7 +1,7 @@
 `ifndef PDM_TO_PCM_TEST_LIB_SVH
 `define PDM_TO_PCM_TEST_LIB_SVH
 
-class base_test extends uvm_test;
+virtual class base_test extends uvm_test;
 
     `uvm_component_utils(base_test)
 
@@ -13,9 +13,15 @@ class base_test extends uvm_test;
     pdm_configuration::vif_t pdm_vif;
     pdm_agent pdm_mic_left, pdm_mic_right;
 
+    i2s_configuration i2s_config;
+    i2s_configuration::vif_t i2s_vif;
+    i2s_agent i2s_slave;
+
     pdm_to_pcm_reg regs;
     spi_reg_adapter reg_adapter;
     spi_reg_predictor reg_predictor;
+
+    pdm_to_pcm_scoreboard scoreboard;
 
     uvm_status_e status;
 
@@ -78,9 +84,23 @@ class base_test extends uvm_test;
             {get_full_name(), ".", pdm_mic_right.get_name()}, "configuration",
             pdm_config_right, this);
 
+        // I2S slave configuration
+        i2s_config = i2s_configuration::type_id::create("i2s_config", this);
+        if (!uvm_resource_db#(virtual interface i2s_if)::read_by_type(
+            get_full_name(), i2s_vif, this)) begin
+            `uvm_fatal(get_type_name(),
+                "Failed to get virtual I2S interface from uvm_resource_db")
+        end
+        i2s_config.set_vif(i2s_vif);
+        i2s_config.set_is_active(UVM_PASSIVE);
+
+        i2s_slave = i2s_agent::type_id::create("i2s_slave", this);
+
+        uvm_resource_db#(i2s_configuration)::set(
+            {get_full_name(), ".", i2s_slave.get_name()}, "configuration",
+            i2s_config, this);
 
         // Register model configuration
-
         regs = new("regs");
         regs.configure(null, "pdm_to_pcm_top_tb.dut.regs_inst");
         regs.build();
@@ -88,6 +108,9 @@ class base_test extends uvm_test;
 
         reg_adapter = spi_reg_adapter::type_id::create("reg_adapter", this);
         reg_predictor = spi_reg_predictor::type_id::create("reg_predictor", this);
+
+        // Scoreboard
+        //scoreboard = pdm_to_pcm_scoreboard::type_id::create("scoreboard", this);
 
     endfunction : build_phase
 
@@ -98,6 +121,10 @@ class base_test extends uvm_test;
         reg_predictor.adapter = reg_adapter;
         reg_predictor.map = regs.default_map;
         spi_master.monitor.output_ap.connect(reg_predictor.bus_in);
+
+        //pdm_mic_left.analysis_port.connect(scoreboard.pdm_left_export);
+        //pdm_mic_right.analysis_port.connect(scoreboard.pdm_right_export);
+        //i2s_slave.analysis_port.connect(scoreboard.i2s_export);
     endfunction : connect_phase
 
     virtual function void end_of_elaboration_phase(uvm_phase phase);
@@ -211,7 +238,7 @@ class pdm_clk_test extends base_test;
 
         seq_right = pdm_seq::type_id::create("seq_right");
         modulator_right = sine_modulator::type_id::create("modulator_right");
-        modulator_right.set_parameters(2e3, 0.5, 0.0, 0.25);
+        modulator_right.set_parameters(0.5e3, 0.9, 0.0);
         seq_right.set_modulator(modulator_right);
     endfunction : build_phase
 
@@ -225,7 +252,7 @@ class pdm_clk_test extends base_test;
             seq_right.start(pdm_mic_right.get_sequencer());
         join_none
 
-        regs.nco_control.write(status, 16'd4027);  // ~48kHz output with 50MHz input clock
+        regs.nco_control.write(status, 16'd4027); // 48kHz sample rate
 
         regs.control.enable.set(1'b1);
         regs.control.update(status);

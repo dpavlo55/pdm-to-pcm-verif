@@ -3,7 +3,7 @@
 
 class spi_seq_item extends uvm_sequence_item;
 
-    `uvm_object_utils(spi_seq_item )
+    `uvm_object_utils(spi_seq_item)
 
     typedef spi_seq_item this_t;
 

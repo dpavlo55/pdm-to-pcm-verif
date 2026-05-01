@@ -17,4 +17,5 @@ interface pdm_if;
         input clk,
         inout data
     );
+
 endinterface

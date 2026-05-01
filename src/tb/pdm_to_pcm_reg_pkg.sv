@@ -37,29 +37,35 @@ package pdm_to_pcm_reg_pkg;
 
     // reg - pdm_to_pcm_reg.data_right
     class pdm_to_pcm_reg__data_right extends uvm_reg;
-        rand uvm_reg_field value;
+        rand uvm_reg_field value_lsb;
+        rand uvm_reg_field value_msb;
 
         function new(string name = "pdm_to_pcm_reg__data_right");
-            super.new(name, 8, UVM_NO_COVERAGE);
+            super.new(name, 16, UVM_NO_COVERAGE);
         endfunction : new
 
         virtual function void build();
-            this.value = new("value");
-            this.value.configure(this, 8, 0, "RO", 1, 'h0, 1, 1, 0);
+            this.value_lsb = new("value_lsb");
+            this.value_lsb.configure(this, 8, 0, "RO", 1, 'h0, 1, 1, 0);
+            this.value_msb = new("value_msb");
+            this.value_msb.configure(this, 8, 8, "RO", 1, 'h0, 1, 1, 0);
         endfunction : build
     endclass : pdm_to_pcm_reg__data_right
 
     // reg - pdm_to_pcm_reg.data_left
     class pdm_to_pcm_reg__data_left extends uvm_reg;
-        rand uvm_reg_field value;
+        rand uvm_reg_field value_lsb;
+        rand uvm_reg_field value_msb;
 
         function new(string name = "pdm_to_pcm_reg__data_left");
-            super.new(name, 8, UVM_NO_COVERAGE);
+            super.new(name, 16, UVM_NO_COVERAGE);
         endfunction : new
 
         virtual function void build();
-            this.value = new("value");
-            this.value.configure(this, 8, 0, "RO", 1, 'h0, 1, 1, 0);
+            this.value_lsb = new("value_lsb");
+            this.value_lsb.configure(this, 8, 0, "RO", 1, 'h0, 1, 1, 0);
+            this.value_msb = new("value_msb");
+            this.value_msb.configure(this, 8, 8, "RO", 1, 'h0, 1, 1, 0);
         endfunction : build
     endclass : pdm_to_pcm_reg__data_left
 
@@ -104,19 +110,21 @@ package pdm_to_pcm_reg_pkg;
             this.default_map.add_reg(this.nco_control, 'h2);
             this.data_right = new("data_right");
             this.data_right.configure(this);
-            this.data_right.add_hdl_path_slice("data_right_value", 0, 8);
+            this.data_right.add_hdl_path_slice("data_right_value_lsb", 0, 8);
+            this.data_right.add_hdl_path_slice("data_right_value_msb", 8, 8);
             this.data_right.build();
             this.default_map.add_reg(this.data_right, 'h4);
             this.data_left = new("data_left");
             this.data_left.configure(this);
-            this.data_left.add_hdl_path_slice("data_left_value", 0, 8);
+            this.data_left.add_hdl_path_slice("data_left_value_lsb", 0, 8);
+            this.data_left.add_hdl_path_slice("data_left_value_msb", 8, 8);
             this.data_left.build();
-            this.default_map.add_reg(this.data_left, 'h5);
+            this.default_map.add_reg(this.data_left, 'h6);
             this.id = new("id");
             this.id.configure(this);
             this.id.add_hdl_path_slice("id_value", 0, 8);
             this.id.build();
-            this.default_map.add_reg(this.id, 'h6);
+            this.default_map.add_reg(this.id, 'h8);
         endfunction : build
     endclass : pdm_to_pcm_reg
 

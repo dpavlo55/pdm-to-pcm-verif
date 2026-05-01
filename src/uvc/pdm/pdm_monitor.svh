@@ -55,7 +55,7 @@ class pdm_monitor extends uvm_monitor;
             wait_active_edge();
             request_ap.write(item);
             wait_release_edge();
-            item.pdm_data = vif.data;
+            item.data = vif.data;
             output_ap.write(item);
         end
     endtask : run_phase
