@@ -12,8 +12,8 @@ class i2s_seq_item extends uvm_sequence_item;
     // parameters
 
     // sequence items
-    logic [15:0] data_left;
-    logic [15:0] data_right;
+    logic signed [15:0] data_left;
+    logic signed [15:0] data_right;
 
     function new(string name = "i2s_seq_item");
         super.new(name);

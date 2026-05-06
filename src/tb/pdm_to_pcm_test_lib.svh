@@ -110,7 +110,7 @@ virtual class base_test extends uvm_test;
         reg_predictor = spi_reg_predictor::type_id::create("reg_predictor", this);
 
         // Scoreboard
-        //scoreboard = pdm_to_pcm_scoreboard::type_id::create("scoreboard", this);
+        scoreboard = pdm_to_pcm_scoreboard::type_id::create("scoreboard", this);
 
     endfunction : build_phase
 
@@ -122,9 +122,9 @@ virtual class base_test extends uvm_test;
         reg_predictor.map = regs.default_map;
         spi_master.monitor.output_ap.connect(reg_predictor.bus_in);
 
-        //pdm_mic_left.analysis_port.connect(scoreboard.pdm_left_export);
-        //pdm_mic_right.analysis_port.connect(scoreboard.pdm_right_export);
-        //i2s_slave.analysis_port.connect(scoreboard.i2s_export);
+        pdm_mic_left.analysis_port.connect(scoreboard.pdm_left_export);
+        pdm_mic_right.analysis_port.connect(scoreboard.pdm_right_export);
+        i2s_slave.analysis_port.connect(scoreboard.i2s_export);
     endfunction : connect_phase
 
     virtual function void end_of_elaboration_phase(uvm_phase phase);

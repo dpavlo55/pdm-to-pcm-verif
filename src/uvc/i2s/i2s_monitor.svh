@@ -40,23 +40,25 @@ class i2s_monitor extends uvm_monitor;
             @(posedge vif.bclk);
         end while (vif.lrclk !== 1'b0);
 
+        `uvm_info(get_type_name(), "Detected start of I2S frame", UVM_DEBUG)
+
         forever begin
             item = item_t::type_id::create("item", this);
 
             foreach (item.data_left[i]) begin
                 @(posedge vif.bclk);
-                item.data_left[15 - i] = vif.sdata;
+                item.data_left[i] = vif.sdata;
             end
 
             foreach (item.data_right[i]) begin
                 @(posedge vif.bclk);
-                item.data_right[15 - i] = vif.sdata;
+                item.data_right[i] = vif.sdata;
             end
 
-            output_ap.write(item);
-
             `uvm_info(get_type_name(), $sformatf("Captured I2S transaction:\n%s",
-                item.convert2string()), UVM_DEBUG)
+                item.convert2string()), UVM_HIGH)
+
+            output_ap.write(item);
         end
 
     endtask : run_phase

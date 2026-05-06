@@ -11,8 +11,8 @@ package pdm_to_pcm_test_pkg;
     // RAL package
     import pdm_to_pcm_reg_pkg::*;
 
-    // Reference model package
-    import cic_model_dpi_pkg::*;
+    // Reference model
+    `include "../tb/cic_model.svh"
 
     // testbench classes
     `include "../tb/pcm_seq_item.svh"

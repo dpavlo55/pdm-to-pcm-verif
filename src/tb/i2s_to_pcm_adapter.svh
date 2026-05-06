@@ -23,11 +23,11 @@ class i2s_to_pcm_adapter extends uvm_component;
         end
 
         pcm_left_item = pcm_seq_item::type_id::create("pcm_left_item");
-        pcm_left_item.data = i2s_item.data_left;
+        pcm_left_item.data = signed'(i2s_item.data_left[15:8]);
         pcm_left_port.write(pcm_left_item);
 
         pcm_right_item = pcm_seq_item::type_id::create("pcm_right_item");
-        pcm_right_item.data = i2s_item.data_right;
+        pcm_right_item.data = signed'(i2s_item.data_right[15:8]);
         pcm_right_port.write(pcm_right_item);
     endfunction : write
 
