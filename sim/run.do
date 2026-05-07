@@ -39,11 +39,11 @@ if {[string equal $sim_mode "post"]} {
     set pdk_root $env(PDK_ROOT)
     set sky130_lib "${pdk_root}/sky130A/libs.ref/sky130_fd_sc_hd/verilog/sky130_fd_sc_hd.v"
     set rtl_filelist "post.f"
-    set compile_flags "-sv -work work -svinputport=net +acc"
+    set compile_flags "-sv -work work -svinputport=net"
     set compile_cmd "vlog $compile_flags $sky130_lib -f $rtl_filelist -f tb.f"
 } else {
     set rtl_filelist "rtl.f"
-    set compile_flags "-sv -work work -lint -svinputport=net +acc"
+    set compile_flags "-sv -work work -lint -svinputport=net"
     set compile_cmd "vlog $compile_flags -f $rtl_filelist -f tb.f"
 }
 
@@ -52,7 +52,11 @@ if {[catch {eval $compile_cmd} compile_err]} {
     quit -code 1
 }
 
-vopt work.pdm_to_pcm_top_tb -o pdm_to_pcm_top_tb_opt -designfile design.bin -debug
+vopt \
+    work.pdm_to_pcm_top_tb \
+    -o pdm_to_pcm_top_tb_opt \
+    -designfile design.bin \
+    -debug
 
 if {[string equal $sim_mode "post"]} {
     set sdf_file "../rtl_post/sdf/${sdf_corner}/tt_um_top__${sdf_corner}.sdf"
@@ -67,9 +71,8 @@ if {[string equal $sim_mode "post"]} {
         +UVM_VERBOSITY=UVM_HIGH \
         -sdfmax /pdm_to_pcm_top_tb/dut/tt_um_top_inst=${sdf_file} \
 } else {
-    vsim work.pdm_to_pcm_top_tb \
+    vsim work.pdm_to_pcm_top_tb_opt \
         -sv_seed random \
-        -voptargs=+acc \
         -onfinish exit \
         -qwavedb=+signal+cells+uvm_configdb+class+transaction+uvm_schematic+uvm_register+uvm_factory+memory \
         +UVM_NO_RELNOTES \

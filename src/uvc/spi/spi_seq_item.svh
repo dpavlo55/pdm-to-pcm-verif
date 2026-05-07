@@ -8,14 +8,14 @@ class spi_seq_item extends uvm_sequence_item;
     typedef spi_seq_item this_t;
 
     // types
-    typedef enum logic [2:0] {
-        SPI_READ = 3'b000,
-        SPI_WRITE = 3'b001
+    typedef enum logic {
+        SPI_READ = 1'b0,
+        SPI_WRITE = 1'b1
     } cmd_t;
 
     // sequence items
     rand cmd_t cmd;
-    rand logic [4:0] addr;
+    rand logic [2:0] addr;
     rand logic [7:0] data;
 
     // metadata
@@ -65,15 +65,20 @@ class spi_seq_item extends uvm_sequence_item;
     endfunction : do_print
 
     virtual function void do_pack(uvm_packer packer);
-        packer.pack_field_int(cmd, $bits(cmd));
-        packer.pack_field_int(addr, $bits(addr));
-        packer.pack_field_int(data, $bits(data));
+        // Byte 0: {3'b0, cmd, 1'b0, addr[2:0]}
+        packer.pack_field_int({3'b0, cmd, 1'b0, addr}, 8);
+        // Byte 1: data
+        packer.pack_field_int(data, 8);
     endfunction : do_pack
 
     virtual function void do_unpack(uvm_packer packer);
-        cmd = cmd_t'(packer.unpack_field_int($bits(cmd)));
-        addr = packer.unpack_field_int($bits(addr));
-        data = packer.unpack_field_int($bits(data));
+        logic [7:0] byte0;
+        // Byte 0: {3'b0, cmd, 1'b0, addr[2:0]}
+        byte0 = packer.unpack_field_int(8);
+        cmd   = cmd_t'(byte0[4]);
+        addr  = byte0[2:0];
+        // Byte 1: data
+        data  = packer.unpack_field_int(8);
     endfunction : do_unpack
 
     virtual function void do_record(uvm_recorder recorder);

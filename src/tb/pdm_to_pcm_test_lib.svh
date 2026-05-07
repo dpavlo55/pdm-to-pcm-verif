@@ -233,12 +233,12 @@ class pdm_clk_test extends base_test;
 
         seq_left = pdm_seq::type_id::create("seq_left");
         modulator_left = sine_modulator::type_id::create("modulator_left");
-        modulator_left.set_parameters(1e3, 0.9, 0.0);
+        modulator_left.set_parameters(1.1e3, 0.9, 0.0);
         seq_left.set_modulator(modulator_left);
 
         seq_right = pdm_seq::type_id::create("seq_right");
         modulator_right = sine_modulator::type_id::create("modulator_right");
-        modulator_right.set_parameters(0.5e3, 0.9, 0.0);
+        modulator_right.set_parameters(0.53e3, 0.9, 0.0);
         seq_right.set_modulator(modulator_right);
     endfunction : build_phase
 

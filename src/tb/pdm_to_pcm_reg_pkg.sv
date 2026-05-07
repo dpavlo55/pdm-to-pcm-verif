@@ -101,22 +101,22 @@ package pdm_to_pcm_reg_pkg;
             this.nco_control.add_hdl_path_slice("nco_control_low", 0, 8);
             this.nco_control.add_hdl_path_slice("nco_control_high", 8, 8);
             this.nco_control.build();
-            this.default_map.add_reg(this.nco_control, 'h2);
+            this.default_map.add_reg(this.nco_control, 'h1);
             this.data_right = new("data_right");
             this.data_right.configure(this);
             this.data_right.add_hdl_path_slice("data_right_value", 0, 8);
             this.data_right.build();
-            this.default_map.add_reg(this.data_right, 'h4);
+            this.default_map.add_reg(this.data_right, 'h3);
             this.data_left = new("data_left");
             this.data_left.configure(this);
             this.data_left.add_hdl_path_slice("data_left_value", 0, 8);
             this.data_left.build();
-            this.default_map.add_reg(this.data_left, 'h5);
+            this.default_map.add_reg(this.data_left, 'h4);
             this.id = new("id");
             this.id.configure(this);
             this.id.add_hdl_path_slice("id_value", 0, 8);
             this.id.build();
-            this.default_map.add_reg(this.id, 'h6);
+            this.default_map.add_reg(this.id, 'h5);
         endfunction : build
     endclass : pdm_to_pcm_reg
 

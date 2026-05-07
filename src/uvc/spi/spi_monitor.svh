@@ -46,9 +46,10 @@ class spi_monitor extends uvm_monitor;
                 miso.push_back(vif.miso);
             end
 
-            item.cmd = (mosi[2] == 1'b0) ?
-                spi_seq_item::SPI_READ : spi_seq_item::SPI_WRITE;
-            item.addr = {>>{mosi[3:7]}};
+            // Byte 0: {3'b0, cmd, 1'b0, addr[2:0]} — MSB first in stream
+            item.cmd  = (mosi[3] == 1'b1) ?
+                spi_seq_item::SPI_WRITE : spi_seq_item::SPI_READ;
+            item.addr = {mosi[5], mosi[6], mosi[7]};
             if (item.cmd == spi_seq_item::SPI_WRITE)
                 item.data = {>>{mosi[8:15]}};
             else begin
