@@ -1,7 +1,7 @@
 `ifndef PDM_TO_PCM_TEST_LIB_SVH
 `define PDM_TO_PCM_TEST_LIB_SVH
 
-virtual class base_test extends uvm_test;
+class base_test extends uvm_test;
 
     `uvm_component_utils(base_test)
 
@@ -214,9 +214,9 @@ class reg_access_test extends base_test;
 
 endclass : reg_access_test
 
-class pdm_clk_test extends base_test;
+class pdm_sine_test extends base_test;
 
-    `uvm_component_utils(pdm_clk_test)
+    `uvm_component_utils(pdm_sine_test)
 
     pdm_seq seq_left;
     pdm_modulator modulator_left;
@@ -229,21 +229,50 @@ class pdm_clk_test extends base_test;
     endfunction
 
     function void build_phase(uvm_phase phase);
+        int freq_int_left;
+        int freq_int_right;
+        real freq_real_left;
+        real freq_real_right;
+        int ph_int_left;
+        int ph_int_right;
+        real ph_real_left;
+        real ph_real_right;
+
         super.build_phase(phase);
+
+        if (!std::randomize(freq_int_left, freq_int_right, ph_int_left, ph_int_right) with {
+            freq_int_left  inside {[10000:2000000]};
+            freq_int_right inside {[10000:2000000]};
+            ph_int_left    inside {[0:36000]};
+            ph_int_right   inside {[0:36000]};
+        }) begin
+            `uvm_fatal(get_type_name(), "Randomization of frequencies/phases failed")
+        end
+
+        freq_real_left = real'(freq_int_left) / 100.0;
+        freq_real_right = real'(freq_int_right) / 100.0;
+        ph_real_left = real'(ph_int_left) / 100.0;
+        ph_real_right = real'(ph_int_right) / 100.0;
+
+        `uvm_info(get_type_name(), $sformatf(
+            "Randomized frequencies and phases - Left: %0.2f Hz, %0.2f Deg (Int: %0d, %0d), Right: %0.2f Hz, %0.2f Deg (Int: %0d, %0d)",
+            freq_real_left, ph_real_left, freq_int_left, ph_int_left,
+            freq_real_right, ph_real_right, freq_int_right, ph_int_right
+        ), UVM_LOW)
 
         seq_left = pdm_seq::type_id::create("seq_left");
         modulator_left = sine_modulator::type_id::create("modulator_left");
-        modulator_left.set_parameters(1.1e3, 0.9, 0.0);
+        modulator_left.set_parameters(freq_real_left, 0.9, ph_real_left);
         seq_left.set_modulator(modulator_left);
 
         seq_right = pdm_seq::type_id::create("seq_right");
         modulator_right = sine_modulator::type_id::create("modulator_right");
-        modulator_right.set_parameters(0.53e3, 0.9, 0.0);
+        modulator_right.set_parameters(freq_real_right, 0.9, ph_real_right);
         seq_right.set_modulator(modulator_right);
     endfunction : build_phase
 
     task run_phase(uvm_phase phase);
-        `uvm_info(get_type_name(), "This is the clock test's run phase", UVM_DEBUG)
+        `uvm_info(get_type_name(), "This is the sine wave modulation test's run phase", UVM_DEBUG)
         phase.phase_done.set_drain_time(this, 20ms);
         phase.raise_objection(this);
 
@@ -261,6 +290,6 @@ class pdm_clk_test extends base_test;
 
     endtask : run_phase
 
-endclass : pdm_clk_test
+endclass : pdm_sine_test
 
 `endif

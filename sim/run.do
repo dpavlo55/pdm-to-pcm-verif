@@ -9,13 +9,19 @@ vmap work work
 
 # ---------------------------------------------------------------------------
 # Simulation mode
-#   $1 = UVM test name                   (required)
+#   $1 = UVM test name                   (optional, default: base_test)
 #   $2 = sim mode: rtl | post            (optional, default: rtl)
 #   $3 = SDF timing corner (post only)   (optional, default: nom_tt_025C_1v80)
 #        choices: nom_tt_025C_1v80  max_ss_100C_1v60  max_ff_n40C_1v95
 #                 min_tt_025C_1v80  min_ss_100C_1v60  min_ff_n40C_1v95
 #                 nom_ff_n40C_1v95  nom_ss_100C_1v60  nom_tt_025C_1v80
 # ---------------------------------------------------------------------------
+
+if {[info exists 1] && ![string equal "$1" ""]} {
+    set uvm_test "$1"
+} else {
+    set uvm_test "base_test"
+}
 
 if {[info exists 2] && ![string equal "$2" ""]} {
     set sim_mode "$2"
@@ -54,6 +60,7 @@ if {[catch {eval $compile_cmd} compile_err]} {
 
 vopt \
     work.pdm_to_pcm_top_tb \
+    +acc \
     -o pdm_to_pcm_top_tb_opt \
     -designfile design.bin \
     -debug
@@ -66,7 +73,7 @@ if {[string equal $sim_mode "post"]} {
         -onfinish exit \
         -qwavedb=+signal+cells+uvm_configdb+class+transaction+uvm_schematic+uvm_register+uvm_factory+memory \
         +UVM_NO_RELNOTES \
-        +UVM_TESTNAME=$1 \
+        +UVM_TESTNAME=$uvm_test \
         +UVM_MAX_QUIT_COUNT=1 \
         +UVM_VERBOSITY=UVM_HIGH \
         -sdfmax /pdm_to_pcm_top_tb/dut/tt_um_top_inst=${sdf_file} \
@@ -76,7 +83,7 @@ if {[string equal $sim_mode "post"]} {
         -onfinish exit \
         -qwavedb=+signal+cells+uvm_configdb+class+transaction+uvm_schematic+uvm_register+uvm_factory+memory \
         +UVM_NO_RELNOTES \
-        +UVM_TESTNAME=$1 \
+        +UVM_TESTNAME=$uvm_test \
         +UVM_MAX_QUIT_COUNT=2 \
         +UVM_VERBOSITY=UVM_HIGH \
 }
