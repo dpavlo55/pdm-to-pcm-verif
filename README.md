@@ -139,6 +139,57 @@ flowchart TB
 
 ## 3. RTL Design Details
 The design captures stereophonic audio and delivers it serial-streamed.
+
+### DUT Block Diagram & Connections
+The simplified internal structure of `pdm_to_pcm_top`, showing the control plane (SPI → register file) and the audio datapath (PDM sampler → CIC decimators → I2S transmitter):
+
+```mermaid
+flowchart LR
+    classDef IO fill:#fce4ec,stroke:#c2185b,stroke-width:2px,color:#333;
+    classDef CTRL fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px,color:#333;
+    classDef DATA fill:#e8f4f8,stroke:#2b7bba,stroke-width:2px,color:#333;
+
+    SPI_PINS(["spi_sck<br/>spi_mosi<br/>spi_miso<br/>spi_cs_n"]):::IO
+    PDM_PINS(["pdm_clk<br/>pdm_data"]):::IO
+    I2S_PINS(["i2s_bclk<br/>i2s_lrclk<br/>i2s_sdata"]):::IO
+
+    subgraph Control_Plane ["Control Plane"]
+        SPI["spi"]:::CTRL
+        ADP["spi_to_regs_adapter"]:::CTRL
+        REGS["regs<br/>(register file)"]:::CTRL
+    end
+
+    subgraph Datapath ["Audio Datapath"]
+        CLKGEN["pdm_clk_gen<br/>(NCO)"]:::DATA
+        SAMPLER["pdm_sampler"]:::DATA
+        CIC_L["cic<br/>(left, N=3, R=32, M=1)"]:::DATA
+        CIC_R["cic<br/>(right, N=3, R=32, M=1)"]:::DATA
+        I2S["i2s<br/>(master TX)"]:::DATA
+    end
+
+    SPI_PINS -->|pins| SPI
+    SPI -->|"mosi/miso data"| ADP
+    ADP -->|"cpuif req/ack, addr, data"| REGS
+
+    REGS -->|"control.enable,<br/>nco_control step"| CLKGEN
+    CLKGEN -->|pdm_clk| PDM_PINS
+    CLKGEN -->|"pdm_clk_re / pdm_clk_fe"| SAMPLER
+
+    PDM_PINS -->|pdm_data| SAMPLER
+    SAMPLER -->|pdm_data_left| CIC_L
+    SAMPLER -->|pdm_data_right| CIC_R
+
+    CIC_L -->|"cic_data_left"| I2S
+    CIC_R -->|"cic_data_right"| I2S
+    CIC_L -->|"hwif_in.data_left"| REGS
+    CIC_R -->|"hwif_in.data_right"| REGS
+    CLKGEN -->|"pdm_clk_re / pdm_clk_fe"| I2S
+
+    I2S -->|pins| I2S_PINS
+```
+
+* **Control Plane:** SPI frames are decoded by `spi` and translated into CPU-interface transactions by `spi_to_regs_adapter`, which read/write the `regs` register file. Writes configure `control.enable` and the NCO `nco_control` step; reads return the captured CIC results from `data_left` / `data_right`.
+* **Audio Datapath:** `pdm_clk_gen` synthesizes the PDM sampling clock from the NCO step and drives both the `pdm_clk` output and the edge strobes used by `pdm_sampler`. The sampler de-interleaves the single `pdm_data` line into left/right streams, each decimated by an independent `cic` filter. `i2s` packs both channels and transmits them on the I2S pins, deriving its clocks from the PDM clock strobes.
 * **Core Logic:** A multi-stage Cascaded Integrator-Comb (CIC) Decimator decodes high-frequency inputs at an OverSampling Ratio (OSR) $R=32$. Filter parameters utilize a 3-stage integrator/comb architecture ($N=3$, $M=1$) with a bit-accurate fixed-point stage distribution preventing bit overflow during DSP operations.
 * **Interfaces:**
   * **SPI Port:** Configures control blocks via register addresses. System status and NCO sampling clocks can be updated at run-time.
