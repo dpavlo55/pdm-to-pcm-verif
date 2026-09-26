@@ -8,6 +8,8 @@ class pcm_comparator extends uvm_component;
     uvm_tlm_analysis_fifo #(pcm_seq_item) expected_fifo;
     uvm_tlm_analysis_fifo #(pcm_seq_item) received_fifo;
 
+    pdm_to_pcm_reg regs;
+
     protected int signed expected_pcm;
     protected int signed received_pcm;
 
@@ -37,13 +39,19 @@ class pcm_comparator extends uvm_component;
             expected_pcm = int'(signed'(expected_item.data));
             received_pcm = int'(signed'(received_item.data));
 
-            if (expected_pcm !== received_pcm) begin
-                `uvm_error(get_type_name(),
-                    $sformatf("PCM mismatch: \n  expected %h \n  received %h",
-                        expected_pcm, received_pcm))
+            if (regs == null || regs.control.enable.get_mirrored_value() == 1'b1) begin
+                if (expected_pcm !== received_pcm) begin
+                    `uvm_error(get_type_name(),
+                        $sformatf("PCM mismatch: \n  expected %h \n  received %h",
+                            expected_pcm, received_pcm))
+                end else begin
+                    `uvm_info(get_type_name(),
+                        $sformatf("PCM match: \n  expected %h \n  received %h",
+                            expected_pcm, received_pcm), UVM_HIGH)
+                end
             end else begin
                 `uvm_info(get_type_name(),
-                    $sformatf("PCM match: \n  expected %h \n  received %h",
+                    $sformatf("Comparison skipped because DUT is disabled: \n  expected %h \n  received %h",
                         expected_pcm, received_pcm), UVM_HIGH)
             end
         end

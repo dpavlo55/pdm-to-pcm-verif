@@ -122,6 +122,8 @@ class base_test extends uvm_test;
         reg_predictor.map = regs.default_map;
         spi_master.monitor.output_ap.connect(reg_predictor.bus_in);
 
+        scoreboard.regs = regs;
+
         pdm_mic_left.analysis_port.connect(scoreboard.pdm_left_export);
         pdm_mic_right.analysis_port.connect(scoreboard.pdm_right_export);
         i2s_slave.analysis_port.connect(scoreboard.i2s_export);

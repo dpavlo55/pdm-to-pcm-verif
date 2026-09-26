@@ -160,6 +160,14 @@ The physical SPI registers are modeled using a SystemRDL-defined register file c
 ### Scoreboarding & Stream Adapters
 The output serial stream on the I2S pins is dynamically reconstructed back to parallel multi-bit values inside a dedicated adapter component [i2s_to_pcm_adapter](src/tb/i2s_to_pcm_adapter.svh) by tracking master-clock boundaries. The dynamic scoreboard comparisons between reconstructed and predicted PCM packets must match within bit-accurate bounds before being flagged to the scoreboard comparators [pcm_comparator](src/tb/pcm_comparator.svh).
 
+### Register-Aware Scoreboarding
+The scoreboard [pdm_to_pcm_scoreboard](src/tb/pdm_to_pcm_scoreboard.svh) holds a handle to the RAL block [pdm_to_pcm_reg](src/tb/pdm_to_pcm_reg_pkg.sv), which is injected by the base test during `connect_phase` and forwarded to both the left and right PCM comparators. Because the DUT must be explicitly enabled through the `control.enable` register field before the CIC datapath produces valid output, each comparator samples the mirrored value of `control.enable` on every captured PCM transaction:
+
+* **Enabled (`control.enable == 1`)**: the predicted and reconstructed PCM values are compared and any mismatch is reported via `uvm_error`.
+* **Disabled (`control.enable == 0`)**: the comparison is skipped and an informational message is logged instead, avoiding spurious failures while the DUT is held inactive or being reconfigured.
+
+This keeps the scoreboard deterministic and aligned with the hardware's actual operating state rather than assuming the datapath is always running.
+
 ---
 
 ## 5. Prerequisites & Testing Instruction
@@ -209,6 +217,7 @@ The testbench matches UVM command line standards. You can specify different pre-
   * Synthesizable stereo CIC decimation, SPI bridge, and I2S physical interfaces.
   * UVM modular-based passive/active environments with isolated agents and predictors.
   * SystemRDL-based automated register-to-synthesis construction and UVM registration.
+  * Register-aware scoreboarding that gates PCM comparisons on the mirrored `control.enable` field.
   * Bit-accurate digital signal verification with random frequency and phase modulation tests.
 * **Scheduled Actions (Upcoming Cycles):**
   * **Functional Coverage Model:** Integrate functional coverage bins (`covergroup` and `coverpoint` arrays) on randomized test parameters (e.g., input phase alignments, signal amplitudes, sample rates, register operations).

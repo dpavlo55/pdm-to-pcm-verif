@@ -13,12 +13,17 @@ class pdm_to_pcm_scoreboard extends uvm_scoreboard;
     protected pcm_comparator comparator_left;
     protected pcm_comparator comparator_right;
 
+    pdm_to_pcm_reg regs;
+
     function new(string name, uvm_component parent);
         super.new(name, parent);
         pdm_left_export = new("pdm_left_export", this);
         pdm_right_export = new("pdm_right_export", this);
         i2s_export = new("i2s_export", this);
+    endfunction : new
 
+    virtual function void build_phase(uvm_phase phase);
+        super.build_phase(phase);
         predictor_left  = pdm_to_pcm_predictor::type_id::create("predictor_left",  this);
         predictor_right = pdm_to_pcm_predictor::type_id::create("predictor_right", this);
         predictor_left.channel = 0;
@@ -27,7 +32,7 @@ class pdm_to_pcm_scoreboard extends uvm_scoreboard;
 
         comparator_left = pcm_comparator::type_id::create("comparator_left", this);
         comparator_right = pcm_comparator::type_id::create("comparator_right", this);
-    endfunction : new
+    endfunction : build_phase
 
     virtual function void connect_phase(uvm_phase phase);
         pdm_left_export.connect(predictor_left.pdm_imp);
@@ -39,6 +44,9 @@ class pdm_to_pcm_scoreboard extends uvm_scoreboard;
 
         predictor_right.pcm_port.connect(comparator_right.pcm_expected_export);
         i2s_adapter.pcm_right_port.connect(comparator_right.pcm_received_export);
+
+        comparator_left.regs = regs;
+        comparator_right.regs = regs;
     endfunction : connect_phase
 
 endclass : pdm_to_pcm_scoreboard
