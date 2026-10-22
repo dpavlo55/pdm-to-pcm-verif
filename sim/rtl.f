@@ -3,6 +3,7 @@
 
 # CIC decimation filter
 ../rtl/src/cic.sv
+../rtl/src/cic_dual_folded.sv
 
 # regs
 ../rtl/src/regs_defs.svh

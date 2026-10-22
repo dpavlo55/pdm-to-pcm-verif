@@ -84,7 +84,7 @@ if {[string equal $sim_mode "post"]} {
         -qwavedb=+signal+cells+uvm_configdb+class+transaction+uvm_schematic+uvm_register+uvm_factory+memory \
         +UVM_NO_RELNOTES \
         +UVM_TESTNAME=$uvm_test \
-        +UVM_MAX_QUIT_COUNT=2 \
+        +UVM_MAX_QUIT_COUNT=0 \
         +UVM_VERBOSITY=UVM_HIGH \
 }
 
