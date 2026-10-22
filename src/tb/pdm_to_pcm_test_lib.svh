@@ -252,7 +252,9 @@ class pdm_sine_test extends base_test;
         end
 
         freq_real_left = real'(freq_int_left) / 100.0;
+        freq_real_left = 1000.0;
         freq_real_right = real'(freq_int_right) / 100.0;
+        freq_real_right = 2000.0;
         ph_real_left = real'(ph_int_left) / 100.0;
         ph_real_right = real'(ph_int_right) / 100.0;
 
@@ -293,5 +295,95 @@ class pdm_sine_test extends base_test;
     endtask : run_phase
 
 endclass : pdm_sine_test
+
+class folded_predictor_test extends uvm_test;
+
+    `uvm_component_utils(folded_predictor_test)
+
+    pdm_to_pcm_predictor predictor;
+    uvm_tlm_analysis_fifo #(pcm_seq_item) left_fifo;
+    uvm_tlm_analysis_fifo #(pcm_seq_item) right_fifo;
+
+    function new(string name, uvm_component parent);
+        super.new(name, parent);
+    endfunction : new
+
+    virtual function void build_phase(uvm_phase phase);
+        super.build_phase(phase);
+        predictor = pdm_to_pcm_predictor::type_id::create("predictor", this);
+        left_fifo = new("left_fifo", this);
+        right_fifo = new("right_fifo", this);
+    endfunction : build_phase
+
+    virtual function void connect_phase(uvm_phase phase);
+        super.connect_phase(phase);
+        predictor.pcm_left_port.connect(left_fifo.analysis_export);
+        predictor.pcm_right_port.connect(right_fifo.analysis_export);
+    endfunction : connect_phase
+
+    task check_constant_pairs(input bit left_bit, input bit right_bit);
+        int positive_expected[4] = '{23, 108, -128, -128};
+        int negative_expected[4] = '{-24, -109, -128, -128};
+        pdm_seq_item pdm_item;
+        pcm_seq_item left_item;
+        pcm_seq_item right_item;
+        int expected_left;
+        int expected_right;
+
+        pdm_item = pdm_seq_item::type_id::create("pdm_item");
+        for (int sample_index = 0; sample_index < 128; sample_index++) begin
+            pdm_item.data = left_bit;
+            predictor.pdm_left_imp.write(pdm_item);
+            if (left_fifo.used() != 0 || right_fifo.used() != 0) begin
+                `uvm_fatal(get_type_name(), "PCM published before the right PDM sample")
+            end
+            pdm_item.data = right_bit;
+            predictor.pdm_right_imp.write(pdm_item);
+
+            if ((sample_index + 1) % 32 != 0) begin
+                if (left_fifo.used() != 0 || right_fifo.used() != 0) begin
+                    `uvm_fatal(get_type_name(), "PCM published before 32 complete PDM pairs")
+                end
+            end else begin
+                if (left_fifo.used() != 1 || right_fifo.used() != 1) begin
+                    `uvm_fatal(get_type_name(), "Expected exactly one PCM item per channel")
+                end
+                if (!left_fifo.try_get(left_item) || !right_fifo.try_get(right_item)) begin
+                    `uvm_fatal(get_type_name(), "Missing PCM pair")
+                end
+                expected_left = left_bit ? positive_expected[sample_index / 32]
+                                         : negative_expected[sample_index / 32];
+                expected_right = right_bit ? positive_expected[sample_index / 32]
+                                           : negative_expected[sample_index / 32];
+                if (left_item.data !== expected_left || right_item.data !== expected_right) begin
+                    `uvm_fatal(get_type_name(), $sformatf(
+                        "Pair %0d: expected (%0d, %0d), received (%0d, %0d)",
+                        sample_index / 32, expected_left, expected_right,
+                        left_item.data, right_item.data))
+                end
+            end
+        end
+    endtask : check_constant_pairs
+
+    virtual task run_phase(uvm_phase phase);
+        pdm_seq_item pdm_item;
+
+        phase.raise_objection(this);
+        check_constant_pairs(1, 0);
+        pdm_item = pdm_seq_item::type_id::create("partial_item");
+        for (int sample_index = 0; sample_index < 13; sample_index++) begin
+            pdm_item.data = 1;
+            predictor.pdm_left_imp.write(pdm_item);
+            pdm_item.data = 0;
+            predictor.pdm_right_imp.write(pdm_item);
+        end
+        predictor.pdm_left_imp.write(pdm_item);
+        predictor.reset();
+        check_constant_pairs(0, 1);
+        `uvm_info(get_type_name(), "Folded predictor pairing, decimation, signed outputs and reset passed", UVM_LOW)
+        phase.drop_objection(this);
+    endtask : run_phase
+
+endclass : folded_predictor_test
 
 `endif

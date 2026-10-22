@@ -12,7 +12,7 @@ package pdm_to_pcm_test_pkg;
     import pdm_to_pcm_reg_pkg::*;
 
     // Reference model
-    `include "../tb/cic_model.svh"
+    `include "../tb/cic_dual_folded_model.svh"
 
     // testbench classes
     `include "../tb/pcm_seq_item.svh"
